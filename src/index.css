@@ -8,35 +8,54 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Luxury Moroccan color palette */
+    --background: 45 25% 97%; /* Soft ivory */
+    --foreground: 30 15% 25%; /* Warm dark brown */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 44 22% 95%; /* Light beige */
+    --card-foreground: 30 15% 25%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 44 22% 95%;
+    --popover-foreground: 30 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 30 25% 35%; /* Rich brown */
+    --primary-foreground: 45 25% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 40 20% 90%; /* Sand beige */
+    --secondary-foreground: 30 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 42 18% 88%; /* Soft sand */
+    --muted-foreground: 30 12% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 35 25% 85%; /* Warm beige */
+    --accent-foreground: 30 15% 25%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 45 25% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 30 25% 35%;
 
     --radius: 0.5rem;
+    
+    /* Custom luxury tokens */
+    --luxury-ivory: 45 25% 97%;
+    --luxury-beige: 40 20% 90%;
+    --luxury-sand: 42 18% 88%;
+    --luxury-brown: 30 25% 35%;
+    --luxury-dark-brown: 30 15% 25%;
+    
+    /* Gradients */
+    --gradient-luxury: linear-gradient(135deg, hsl(var(--luxury-ivory)), hsl(var(--luxury-beige)));
+    --gradient-overlay: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%);
+    
+    /* Shadows */
+    --shadow-luxury: 0 10px 40px -10px hsl(var(--luxury-brown) / 0.1);
+    --shadow-hover: 0 20px 60px -10px hsl(var(--luxury-brown) / 0.15);
+    
+    /* Transitions */
+    --transition-luxury: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +120,48 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-serif {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .font-sans {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* Scroll animations */
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: var(--transition-luxury);
+  }
+  
+  .fade-in-up.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Luxury button variants */
+  .btn-luxury {
+    @apply px-8 py-3 bg-primary text-primary-foreground font-medium tracking-wide transition-all duration-300;
+    @apply hover:shadow-[var(--shadow-hover)] hover:scale-105;
+  }
+  
+  /* Gradient overlays */
+  .gradient-overlay {
+    background: var(--gradient-overlay);
+  }
+  
+  /* Custom shadows */
+  .shadow-luxury {
+    box-shadow: var(--shadow-luxury);
+  }
+  
+  .shadow-luxury-hover {
+    box-shadow: var(--shadow-hover);
   }
 }
