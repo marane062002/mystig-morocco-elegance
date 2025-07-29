@@ -19,8 +19,10 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				serif: ['Playfair Display', 'serif'],
+				sans: ['Lato', 'sans-serif'],
+				serif: ['Cormorant Garamond', 'serif'],
+				display: ['Crimson Text', 'serif'],
+				elegant: ['Source Serif Pro', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
