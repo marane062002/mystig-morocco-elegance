@@ -142,6 +142,11 @@ All colors MUST be HSL.
 }
 
 @layer components {
+  /* Button luxury style */
+  .btn-luxury {
+    @apply px-8 py-4 bg-primary text-primary-foreground font-medium tracking-wide uppercase transition-all duration-500 hover:bg-primary/90 hover:shadow-luxury-hover hover:scale-105;
+  }
+  
   /* Advanced scroll animations */
   .fade-in-up {
     opacity: 0;
