@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   BarChart3, 
   Hotel, 
@@ -21,6 +22,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const menuItems = [
     { icon: Home, label: 'Tableau de bord', href: '/dashboard', active: true },
@@ -89,13 +91,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Settings className="w-5 h-5" />
               <span className="font-medium">Paramètres</span>
             </a>
-            <a
-              href="/"
+            <button
+              onClick={logout}
               className="flex items-center space-x-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
             >
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Déconnexion</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -114,11 +116,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-foreground">Ahmed Benali</p>
+                <p className="text-sm font-medium text-foreground">{user?.name || 'Utilisateur'}</p>
                 <p className="text-xs text-muted-foreground">Vendeur Premium</p>
               </div>
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-primary-foreground font-medium">AB</span>
+                <span className="text-primary-foreground font-medium">
+                  {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                </span>
               </div>
             </div>
           </div>

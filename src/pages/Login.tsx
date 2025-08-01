@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { toast } from 'sonner';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -11,11 +17,29 @@ const Login = () => {
 
   useScrollAnimation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login - in real app, this would validate credentials
-    if (formData.email && formData.password) {
-      window.location.href = '/dashboard';
+    
+    if (!formData.email || !formData.password) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const success = await login(formData.email, formData.password);
+      
+      if (success) {
+        toast.success('Connexion réussie !');
+        navigate('/dashboard');
+      } else {
+        toast.error('Email ou mot de passe incorrect');
+      }
+    } catch (error) {
+      toast.error('Erreur de connexion. Veuillez réessayer.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,9 +140,10 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
+                disabled={loading}
+                className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Se connecter
+                {loading ? 'Connexion...' : 'Se connecter'}
               </button>
             </form>
 
