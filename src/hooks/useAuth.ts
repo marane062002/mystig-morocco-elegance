@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { authAPI, getAuthToken, removeAuthToken } from '@/services/api';
 
