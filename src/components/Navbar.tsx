@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, LogIn } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 
 const Navbar = () => {
@@ -62,6 +62,15 @@ const Navbar = () => {
               <Search className="w-5 h-5" />
               <span className="absolute inset-0 rounded-full bg-primary/10 scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </button>
+            
+            {/* Login Button */}
+            <a
+              href="/login"
+              className="ml-4 flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300 font-medium"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Connexion</span>
+            </a>
           </div>
 
           {/* Mobile Actions */}
@@ -72,6 +81,12 @@ const Navbar = () => {
             >
               <Search className="w-5 h-5" />
             </button>
+            <a
+              href="/login"
+              className="p-2 text-foreground hover:text-primary transition-colors duration-300"
+            >
+              <LogIn className="w-5 h-5" />
+            </a>
             <button
               className="p-2 text-foreground"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
