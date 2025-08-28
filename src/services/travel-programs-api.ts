@@ -68,7 +68,7 @@ export const activitiesAPI = {
   delete: async (id: string) => apiRequest(`/activities/${id}`, { method: 'DELETE' }),
 };
 
-// Services API
+// Services API (use travel-programs types)
 export const servicesAPI = {
   getAll: async () => apiRequest('/services'),
   getById: async (id: string) => apiRequest(`/services/${id}`),

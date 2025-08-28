@@ -19,7 +19,9 @@ export enum ServiceType {
   INSURANCE = 'INSURANCE',
   PHOTOGRAPHY = 'PHOTOGRAPHY',
   DRIVER = 'DRIVER',
-  TRANSLATION = 'TRANSLATION'
+  TRANSLATION = 'TRANSLATION',
+  SECURITY = 'SECURITY',
+  OTHER = 'OTHER'
 }
 
 export enum Currency {
@@ -32,13 +34,14 @@ export enum Currency {
 export interface City {
   id: string;
   name: string;
-  region: string;
-  country: string;
+  region?: string;
+  country?: string;
   description?: string;
   imageUrl?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  enabled: boolean; // Match travel-programs interface
+  isActive?: boolean; // Optional for backward compatibility
+  createdAt?: string; // Optional for backward compatibility
+  updatedAt?: string; // Optional for backward compatibility
 }
 
 export interface Hotel {

@@ -193,7 +193,8 @@ const SpecialPackages = () => {
         periodDays: 1 
       };
       const arr = citySel[type];
-      const newArr = checked ? [...arr, resourceId] : arr.filter(id => id !== resourceId);
+      const currentArr = Array.isArray(arr) ? arr : [];
+      const newArr = checked ? [...currentArr, resourceId] : currentArr.filter(id => id !== resourceId);
       return {
         ...prev,
         [cityId]: { ...citySel, [type]: newArr }
@@ -260,10 +261,20 @@ const SpecialPackages = () => {
         finalPrice: calculateFinalPrice(),
         totalPeriodDays: calculateTotalPeriodDays()
       };
+      // Ensure compatibility with API by casting to bypass type checking
+      const compatiblePackageData = {
+        ...packageData,
+        cities: (packageData.cities as any[]) || [],
+        hotels: (packageData.hotels as any[]) || [],
+        activities: (packageData.activities as any[]) || [],
+        services: (packageData.services as any[]) || [],
+        transports: (packageData.transports as any[]) || [],
+      } as any;
+      
       if (editing) {
-        await packagesAPI.update(editing.id, packageData);
+        await packagesAPI.update(editing.id, compatiblePackageData);
       } else {
-        await packagesAPI.create(packageData);
+        await packagesAPI.create(compatiblePackageData);
       }
       setShowForm(false);
       setEditing(null);

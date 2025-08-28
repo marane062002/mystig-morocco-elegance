@@ -55,9 +55,10 @@ const Hotelsc = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedCity = cities.find(c => c.id === (form.city?.id || form.city));
       const payload = {
         ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
+        city: selectedCity, // ensure city object with all properties
       };
       if (editing) {
         await hotelsAPI.update(editing.id, payload);

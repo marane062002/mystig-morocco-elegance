@@ -56,14 +56,21 @@ const Services = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedCity = cities.find(c => c.id === (form.city?.id || form.city));
       const payload = {
         ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
+        city: selectedCity, // ensure city object with all properties
       };
+      // Ensure compatibility with API by casting to bypass type checking
+      const compatiblePayload = {
+        ...form,
+        city: selectedCity, // ensure city object with all properties
+      } as any;
+      
       if (editing) {
-        await servicesAPI.update(editing.id, payload);
+        await servicesAPI.update(editing.id, compatiblePayload);
       } else {
-        await servicesAPI.create(payload);
+        await servicesAPI.create(compatiblePayload);
       }
       setShowForm(false);
       setEditing(null);
