@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { login } from '@/services/auth';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -8,14 +11,21 @@ const Login = () => {
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   useScrollAnimation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login - in real app, this would validate credentials
-    if (formData.email && formData.password) {
-      window.location.href = '/dashboard';
+    setError('');
+    try {
+      const user = await login(formData.email, formData.password);
+      setUser(user);
+      navigate('/dashboard');
+    } catch {
+      setError('Email ou mot de passe invalide');
     }
   };
 
@@ -33,14 +43,14 @@ const Login = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <a
             href="/"
-            className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors duration-300"
+            className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors duration-300 font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Retour à l'accueil</span>
+            <span>Back to Home</span>
           </a>
           
           <h1 className="font-serif text-3xl font-light tracking-wider text-foreground">
-            MystigTravel
+            MysticTravel
           </h1>
         </div>
       </div>
@@ -54,17 +64,17 @@ const Login = () => {
                 <LogIn className="w-8 h-8 text-primary-foreground" />
               </div>
               <h2 className="font-serif text-3xl font-bold text-foreground mb-2">
-                Connexion Vendeur
+                Seller Login
               </h2>
               <p className="text-muted-foreground">
-                Accédez à votre espace de gestion
+                Access your management dashboard
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Adresse email
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -79,7 +89,7 @@ const Login = () => {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Mot de passe
+                  Password
                 </label>
                 <div className="relative">
                   <input
@@ -118,15 +128,17 @@ const Login = () => {
                 type="submit"
                 className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
               >
-                Se connecter
+                Sign In
               </button>
             </form>
 
+            {error && <div className="mt-4 text-red-500 text-center font-medium">{error}</div>}
+
             <div className="mt-8 text-center">
               <p className="text-muted-foreground text-sm">
-                Pas encore de compte ?{' '}
+                Don't have an account yet?{' '}
                 <a href="#" className="text-primary hover:text-primary/80 transition-colors duration-300 font-medium">
-                  Contactez-nous
+                  Contact us
                 </a>
               </p>
             </div>

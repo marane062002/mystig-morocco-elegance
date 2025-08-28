@@ -3,9 +3,13 @@ import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 const Footer = () => {
   const quickLinks = [
     { name: 'Accueil', href: '#home' },
+    { name: 'Qui sommes-nous', href: '#about' },
+    { name: 'Nos Services', href: '#services' },
     { name: 'Destinations', href: '#destinations' },
-    { name: 'Expériences', href: '#experiences' },
-    { name: 'À propos', href: '#about' },
+    { name: 'Hébergements', href: '#accommodations' },
+    { name: 'Activités', href: '#activities' },
+    { name: 'Gastronomie', href: '#gastronomy' },
+    { name: 'Transport', href: '#transport' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -23,12 +27,12 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <h3 className="font-serif text-3xl font-bold text-foreground mb-4">
-              MystigTravel
+              MysticTravel
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-md">
-              Créateur de voyages d'exception au Maroc depuis plus de 15 ans. 
-              Nous révélons la beauté authentique du royaume chérifien à travers 
-              des expériences sur mesure d'un raffinement incomparable.
+              Agence de voyage spécialisée dans la découverte authentique du Maroc depuis plus de 15 ans. 
+              Nous créons des expériences uniques et personnalisées qui respectent la culture locale 
+              et révèlent les trésors cachés du royaume chérifien.
             </p>
             
             {/* Newsletter */}
@@ -87,15 +91,16 @@ const Footer = () => {
             
             <div className="text-sm text-muted-foreground space-y-2">
               <p>+212 524 123 456</p>
-              <p>contact@mystigtravel.ma</p>
-              <p>Avenue Mohammed V, Marrakech</p>
+              <p>info@mystictravel.ma</p>
+              <p>123 Avenue Mohammed V, Gueliz</p>
+              <p>Marrakech 40000, Maroc</p>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-border/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>© 2024 MystigTravel. Tous droits réservés.</p>
+          <p>© 2024 MysticTravel. Tous droits réservés.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-primary transition-colors duration-300">
               Politique de confidentialité

@@ -204,6 +204,39 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-hover);
   }
   
+  /* Moroccan-inspired animations */
+  .moroccan-tile {
+    background-image: 
+      radial-gradient(circle at 25% 25%, #f97316 2px, transparent 2px),
+      radial-gradient(circle at 75% 75%, #dc2626 2px, transparent 2px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+  }
+  
+  .zellij-pattern {
+    background-image: 
+      linear-gradient(45deg, transparent 40%, rgba(249, 115, 22, 0.1) 40%, rgba(249, 115, 22, 0.1) 60%, transparent 60%),
+      linear-gradient(-45deg, transparent 40%, rgba(220, 38, 38, 0.1) 40%, rgba(220, 38, 38, 0.1) 60%, transparent 60%);
+    background-size: 30px 30px;
+  }
+  
+  .hover-lift {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px -10px rgba(249, 115, 22, 0.3);
+  }
+  
+  .moroccan-border {
+    border-image: linear-gradient(45deg, #f97316, #dc2626, #eab308) 1;
+  }
+  
+  .scale-102 {
+    transform: scale(1.02);
+  }
+  
   /* Smooth scrolling */
   html {
     scroll-behavior: smooth;

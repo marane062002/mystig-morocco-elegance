@@ -22,7 +22,7 @@ const Hero = () => {
         <div className="text-center text-white px-6 max-w-5xl mx-auto">
           <div className="fade-in-up animate">
             <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-widest leading-none">
-              MystigTravel
+              MysticTravel
             </h1>
             <div className="w-24 h-px bg-white/60 mx-auto mb-8"></div>
             <p className="font-elegant text-lg md:text-xl font-light tracking-[0.3em] uppercase opacity-80">

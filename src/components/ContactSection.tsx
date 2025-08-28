@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 const ContactSection = () => {
   return (
@@ -29,8 +29,9 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Adresse</h4>
                     <p className="text-muted-foreground">
-                      Avenue Mohammed V<br />
-                      Marrakech, Maroc
+                      123 Avenue Mohammed V<br />
+                      Gueliz, Marrakech 40000<br />
+                      Royaume du Maroc
                     </p>
                   </div>
                 </div>
@@ -41,7 +42,10 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Téléphone</h4>
-                    <p className="text-muted-foreground">+212 524 123 456</p>
+                    <p className="text-muted-foreground">
+                      +212 524 123 456<br />
+                      +212 661 234 567 (Mobile)
+                    </p>
                   </div>
                 </div>
 
@@ -51,7 +55,24 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Email</h4>
-                    <p className="text-muted-foreground">contact@mystigtravel.ma</p>
+                    <p className="text-muted-foreground">
+                      info@mystictravel.ma<br />
+                      reservations@mystictravel.ma
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-primary rounded-lg">
+                    <Clock className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Horaires</h4>
+                    <p className="text-muted-foreground">
+                      Lun-Ven : 9h00 - 18h00<br />
+                      Sam : 9h00 - 13h00<br />
+                      Urgences : 24h/7j
+                    </p>
                   </div>
                 </div>
               </div>
@@ -63,22 +84,22 @@ const ContactSection = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Prénom
+                      Nom complet
                     </label>
                     <input
                       type="text"
                       className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                      placeholder="Votre prénom"
+                      placeholder="Votre nom complet"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Nom
+                      Téléphone
                     </label>
                     <input
-                      type="text"
+                      type="tel"
                       className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                      placeholder="Votre nom"
+                      placeholder="+212 6XX XXX XXX"
                     />
                   </div>
                 </div>
@@ -96,12 +117,49 @@ const ContactSection = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Message
+                    Type de voyage
+                  </label>
+                  <select className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                    <option>Voyage en couple</option>
+                    <option>Voyage en famille</option>
+                    <option>Voyage entre amis</option>
+                    <option>Voyage solo</option>
+                    <option>Voyage d'affaires</option>
+                    <option>Lune de miel</option>
+                  </select>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Date de départ souhaitée
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Durée du séjour
+                    </label>
+                    <select className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
+                      <option>2-3 jours</option>
+                      <option>4-7 jours</option>
+                      <option>8-14 jours</option>
+                      <option>Plus de 2 semaines</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Décrivez votre voyage idéal
                   </label>
                   <textarea
                     rows={4}
                     className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 resize-none"
-                    placeholder="Décrivez votre voyage idéal..."
+                    placeholder="Parlez-nous de vos envies, centres d'intérêt, budget approximatif..."
                   ></textarea>
                 </div>
 
@@ -109,7 +167,7 @@ const ContactSection = () => {
                   type="submit"
                   className="w-full btn-luxury rounded-lg text-center"
                 >
-                  Envoyer la Demande
+                  Demander un Devis Gratuit
                 </button>
               </form>
             </div>

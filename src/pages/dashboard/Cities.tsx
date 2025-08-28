@@ -1,91 +1,84 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Plus, Edit, Trash2, Star, X, Save, MapPin } from 'lucide-react';
-import { Hotel, City } from '@/models/travel-programs';
-import { hotelsAPI, citiesAPI } from '@/services/travel-programs-api';
+import { Plus, Edit, Trash2, MapPin, X, Save } from 'lucide-react';
+import { City } from '@/models/travel-programs';
+import { citiesAPI } from '@/services/travel-programs-api';
 
-const defaultForm: Partial<Hotel> = {
+const defaultForm: Partial<City> = {
   name: '',
-  city: undefined, // <-- use city object
-  price: 0,
-  stars: 3,
-  active: true,
+  region: '',
+  country: '',
+  enabled: true,
 };
 
-const Hotelsc = () => {
-  const [hotels, setHotels] = useState<Hotel[]>([]);
+const Cities = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState<Hotel | null>(null);
-  const [form, setForm] = useState<Partial<Hotel>>(defaultForm);
+  const [editing, setEditing] = useState<City | null>(null);
+  const [form, setForm] = useState<Partial<City>>(defaultForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchData();
+    fetchCities();
   }, []);
 
-  const fetchData = async () => {
+  const fetchCities = async () => {
     setLoading(true);
     try {
-      const [hotelsData, citiesData] = await Promise.all([
-        hotelsAPI.getAll(),
-        citiesAPI.getAll()
-      ]);
-      setHotels(hotelsData);
-      setCities(citiesData);
+      const data = await citiesAPI.getAll();
+      setCities(data);
     } catch (err) {
-      setError('Failed to fetch hotels or cities');
+      setError('Failed to fetch cities');
     } finally {
       setLoading(false);
     }
   };
 
-  // Adapt handleEdit to set city object
-  const handleEdit = (hotel: Hotel) => {
-    setEditing(hotel);
-    setForm({
-      ...hotel,
-      city: hotel.city, // city object
-    });
-    setShowForm(true);
-  };
-
-  // Adapt handleSubmit to send city object
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Client-side uniqueness check for name
+    if (
+      !editing &&
+      cities.some(
+        (c) =>
+          c.name.trim().toLowerCase() === (form.name || '').trim().toLowerCase()
+      )
+    ) {
+      setError('Le nom de la ville doit être unique.');
+      return;
+    }
     try {
-      const payload = {
-        ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
-      };
       if (editing) {
-        await hotelsAPI.update(editing.id, payload);
+        await citiesAPI.update(editing.id, form);
       } else {
-        await hotelsAPI.create(payload);
+        await citiesAPI.create(form);
       }
       setShowForm(false);
       setEditing(null);
       setForm(defaultForm);
-      fetchData();
+      fetchCities();
     } catch (err) {
-      setError('Failed to save hotel');
+      setError('Failed to save city');
     }
+  };
+
+  const handleEdit = (city: City) => {
+    setEditing(city);
+    setForm(city);
+    setShowForm(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet hôtel ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette ville ?')) {
       try {
-        await hotelsAPI.delete(id);
-        fetchData();
+        await citiesAPI.delete(id);
+        fetchCities();
       } catch (err) {
-        setError('Failed to delete hotel');
+        setError('Failed to delete city');
       }
     }
   };
-
-  // Adapt getCityName
-  const getCityName = (city: City | undefined) => city?.name || 'Ville inconnue';
 
   return (
     <DashboardLayout>
@@ -94,10 +87,10 @@ const Hotelsc = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-serif text-3xl font-bold text-foreground mb-2">
-              Gestion des Hôtels
+              Gestion des Villes
             </h1>
             <p className="text-muted-foreground">
-              Ajoutez et gérez les hôtels disponibles
+              Ajoutez et gérez les villes disponibles
             </p>
           </div>
           <button
@@ -109,7 +102,7 @@ const Hotelsc = () => {
             className="flex items-center space-x-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all duration-300"
           >
             <Plus className="w-5 h-5" />
-            <span>Ajouter un hôtel</span>
+            <span>Ajouter une ville</span>
           </button>
         </div>
 
@@ -127,10 +120,10 @@ const Hotelsc = () => {
         {showForm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="p-6 bg-gradient-to-r from-yellow-100 to-blue-100 border-b">
+              <div className="p-6 bg-gradient-to-r from-blue-100 to-green-100 border-b">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    {editing ? 'Modifier l\'hôtel' : 'Ajouter un hôtel'}
+                    {editing ? 'Modifier la ville' : 'Ajouter une ville'}
                   </h2>
                   <button
                     onClick={() => {
@@ -160,84 +153,58 @@ const Hotelsc = () => {
                           name: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                       required
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Ville *
-                    </label>
-                    <select
-                      value={form.city?.id || ''}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          city: cities.find(c => c.id === e.target.value),
-                        }))
-                      }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
-                      required
-                    >
-                      <option value="">Sélectionner une ville</option>
-                      {cities.map(city => (
-                        <option key={city.id} value={city.id}>{city.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Prix *
+                      Région
                     </label>
                     <input
-                      type="number"
-                      value={form.price || 0}
+                      type="text"
+                      value={form.region || ''}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          price: Number(e.target.value),
+                          region: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
-                      min="0"
-                      required
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Étoiles *
+                      Pays *
                     </label>
-                    <select
-                      value={form.stars || 3}
+                    <input
+                      type="text"
+                      value={form.country || ''}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          stars: Number(e.target.value),
+                          country: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                       required
-                    >
-                      {[1,2,3,4,5].map(star => (
-                        <option key={star} value={star}>{star} ⭐</option>
-                      ))}
-                    </select>
+                    />
                   </div>
                   <div className="flex items-center mt-6">
                     <input
                       type="checkbox"
-                      checked={form.active ?? true}
+                      checked={form.enabled ?? true}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          active: e.target.checked,
+                          enabled: e.target.checked,
                         }))
                       }
                       className="mr-2"
-                      id="active"
+                      id="enabled"
                     />
-                    <label htmlFor="active" className="text-sm font-semibold text-gray-700">
-                      Hôtel activé
+                    <label htmlFor="enabled" className="text-sm font-semibold text-gray-700">
+                      Ville activée
                     </label>
                   </div>
                 </div>
@@ -256,7 +223,7 @@ const Hotelsc = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center space-x-2 px-8 py-3 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition-colors"
+                    className="flex items-center space-x-2 px-8 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
                   >
                     <Save className="w-5 h-5" />
                     <span>{editing ? 'Enregistrer' : 'Créer'}</span>
@@ -267,64 +234,56 @@ const Hotelsc = () => {
           </div>
         )}
 
-        {/* Hotels List */}
+        {/* Cities List */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-          <div className="p-6 bg-gradient-to-r from-yellow-100 to-blue-100 border-b">
-            <h2 className="text-xl font-bold text-gray-800">Liste des hôtels</h2>
+          <div className="p-6 bg-gradient-to-r from-blue-100 to-green-100 border-b">
+            <h2 className="text-xl font-bold text-gray-800">Liste des villes</h2>
           </div>
 
           <div className="p-6">
             {loading ? (
               <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <p className="mt-4 text-gray-500">Chargement...</p>
               </div>
-            ) : hotels.length === 0 ? (
+            ) : cities.length === 0 ? (
               <div className="text-center py-12">
-                <Star className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Aucun hôtel trouvé</p>
+                <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">Aucune ville trouvée</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {hotels.map((hotel) => (
+                {cities.map((city) => (
                   <div
-                    key={hotel.id}
-                    className="bg-gradient-to-br from-yellow-50 to-blue-50 rounded-xl border border-yellow-200 p-6 hover:shadow-lg transition-all duration-300"
+                    key={city.id}
+                    className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl border border-blue-200 p-6 hover:shadow-lg transition-all duration-300"
                   >
                     <h3 className="font-bold text-gray-800 text-lg mb-1">
-                      {hotel.name}
+                      {city.name}
                     </h3>
-                    <div className="flex items-center text-sm text-gray-600 mb-2">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      {getCityName(hotel.city)}
-                    </div>
+                    <p className="text-blue-600 text-sm mb-2">{city.region}</p>
+                    <p className="text-gray-600 text-sm mb-2">{city.country}</p>
                     <div className="flex items-center mb-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                        {hotel.price} MAD
-                      </span>
-                      <span className="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                        {hotel.stars} ⭐
-                      </span>
                       <span
-                        className={`ml-2 px-3 py-1 rounded-full text-xs font-semibold ${
-                          hotel.active
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          city.enabled
                             ? 'bg-green-100 text-green-700'
                             : 'bg-red-100 text-red-700'
                         }`}
                       >
-                        {hotel.active ? 'Activé' : 'Désactivé'}
+                        {city.enabled ? 'Activée' : 'Désactivée'}
                       </span>
                     </div>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleEdit(hotel)}
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                        onClick={() => handleEdit(city)}
+                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                         <span>Modifier</span>
                       </button>
                       <button
-                        onClick={() => handleDelete(hotel.id)}
+                        onClick={() => handleDelete(city.id)}
                         className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -342,4 +301,4 @@ const Hotelsc = () => {
   );
 };
 
-export default Hotelsc;
+export default Cities;
