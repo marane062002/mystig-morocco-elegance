@@ -7,30 +7,38 @@ const AboutSection = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 fade-in-up">
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Who Are We?
+              About Us
             </h2>
             <div className="w-24 h-px bg-primary mx-auto mb-8"></div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              MysticTravel is a travel agency specializing in authentic discovery of Morocco, 
-              offering unique and personalized experiences for over 15 years.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed italic">
+              Our Essence is Experience .. But our Passion is Morocco
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
             <div className="fade-in-up">
               <h3 className="font-serif text-3xl font-bold text-foreground mb-6">
-                Our Mission
+                Our Journey
               </h3>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                We are committed to revealing the authentic beauty of Morocco through tailor-made journeys 
-                that respect local culture and environment. Our passionate team accompanies you in discovering 
-                the hidden treasures of the Cherifian kingdom.
+                Mystic Travel was founded in 2024 by Mohammed Badre, Mohammed Bouchareb, and Alaoui Chrifi Kamal. 
+                It bridges ancestral Moroccan wisdom with modern digital finesse.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                From the bustling medina of Marrakech to the golden dunes of the Sahara, through the 
-                majestic Atlas mountains, we create unforgettable experiences that touch the souls 
-                of our travelers.
-              </p>
+              <h4 className="font-semibold text-foreground mb-4 text-xl">Meet the visionaries</h4>
+              <div className="space-y-4">
+                <div className="border-l-4 border-primary pl-4">
+                  <h5 className="font-semibold text-foreground">Mohammed Badre</h5>
+                  <p className="text-sm text-muted-foreground">Founder & Manager - 15 years in project management, passion for tourism, innovation, and Moroccan heritage.</p>
+                </div>
+                <div className="border-l-4 border-primary pl-4">
+                  <h5 className="font-semibold text-foreground">Mohammed Bouchareb</h5>
+                  <p className="text-sm text-muted-foreground">Co-Founder & Technical Director - 58 years in tourism & craftsmanship, guardian of Fes' artisanal traditions.</p>
+                </div>
+                <div className="border-l-4 border-primary pl-4">
+                  <h5 className="font-semibold text-foreground">Alaoui Chrifi Kamal</h5>
+                  <p className="text-sm text-muted-foreground">Co-Creator & Expert Guide - Native of Fes, deeply rooted in Moroccan tradition, offering soulful guidance.</p>
+                </div>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-6 fade-in-up">

@@ -29,9 +29,10 @@ const ContactSection = () => {
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Adresse</h4>
                     <p className="text-muted-foreground">
-                      123 Avenue Mohammed V<br />
-                      Gueliz, Marrakech 40000<br />
-                      Royaume du Maroc
+                      Résidence Emeraude, Immeuble 6,<br />
+                      Etage 1, Bureau 3<br />
+                      Wlah Hlal Hssain, Sala Al Jadida<br />
+                      Maroc
                     </p>
                   </div>
                 </div>
