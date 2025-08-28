@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, Phone, Users, Calendar, MapPin, Clock, ChevronRight, ChevronLeft, Send, CheckCircle } from 'lucide-react';
-import { DemandStatus, City, Activity, CitySelection, Demand } from '@/models/travel-programs';
+import { DemandStatus, City, Activity, CitySelection, ClientDemand } from '@/types/travel';
 import { citiesAPI, activitiesAPI, demandsAPI } from '@/services/travel-programs-api';
 
 interface PlanAFormProps {
@@ -69,13 +69,13 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
         selectedCities: [...prev.selectedCities, cityId],
         citySelections: {
           ...prev.citySelections,
-          [cityId]: {
-            cityId,
-            startDate: '',
-            endDate: '',
-            duration: 0,
-            activities: []
-          }
+            [cityId]: {
+              cityId,
+              startDate: '',
+              endDate: '',
+              duration: 0,
+              activityIds: []
+            }
         }
       }));
       fetchActivitiesForCity(cityId);
@@ -130,22 +130,24 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
           endDate: selection.endDate,
           durationDays: selection.duration,
           activities: (activities[selection.cityId] ?? [])
-            .filter(a => selection.activities.includes(a.id)),
+            .filter(a => selection.activityIds.includes(a.id)),
           services: [],
           selectedHotel: undefined,
           selectedTransport: undefined
         };
       });
 
-      const demand: Partial<Demand> = {
-        fullName: formData.clientName,
-        email: formData.email,
-        phone: formData.phone,
-        travelers: formData.numberOfTravelers,
-        periodDays: calculateTripPeriod(),
+      const demand: Partial<ClientDemand> = {
+        clientInfo: {
+          fullName: formData.clientName,
+          email: formData.email,
+          phone: formData.phone,
+          numberOfTravelers: formData.numberOfTravelers,
+          tripPeriod: calculateTripPeriod()
+        },
+        citySelections: Object.values(formData.citySelections),
         status: DemandStatus.PENDING,
-        totalPrice: 0,
-        cities: demandCities
+        totalPrice: 0
       };
 
       console.log('Demand payload:', demand);
@@ -435,13 +437,13 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                             <input
                               type="checkbox"
                               id={`activity-${activity.id}`}
-                              checked={selection?.activities.includes(activity.id) || false}
+                              checked={selection?.activityIds.includes(activity.id) || false}
                               onChange={(e) => {
-                                const currentActivities = selection?.activities || [];
+                                const currentActivities = selection?.activityIds || [];
                                 const newActivities = e.target.checked
                                   ? [...currentActivities, activity.id]
                                   : currentActivities.filter(id => id !== activity.id);
-                                updateCitySelection(cityId, 'activities', newActivities);
+                                updateCitySelection(cityId, 'activityIds', newActivities);
                               }}
                               className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
                             />
@@ -482,7 +484,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                 {Object.values(formData.citySelections).map((selection) => {
                   const city = cities.find(c => c.id === selection.cityId);
                   const selectedActivities = activities[selection.cityId]?.filter(a => 
-                    selection.activities.includes(a.id)
+                    selection.activityIds.includes(a.id)
                   ) || [];
 
                   return (

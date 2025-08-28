@@ -28,6 +28,7 @@ export enum Currency {
 export enum ArtisanCategory {
   TEXTILES = "TEXTILES",
   CERAMICS = "CERAMICS",
+  POTTERY = "POTTERY",
   JEWELRY = "JEWELRY",
   LEATHER = "LEATHER",
   WOODWORK = "WOODWORK",
@@ -35,6 +36,8 @@ export enum ArtisanCategory {
 }
 export enum ArtisanStatus {
   AVAILABLE = "AVAILABLE",
+  UNAVAILABLE = "UNAVAILABLE",
+  COMING_SOON = "COMING_SOON",
   RESERVED = "RESERVED",
   SOLD = "SOLD",
 }
@@ -62,6 +65,8 @@ export enum PaymentStatus {
 // Updated FoodType and FoodStatus to match SQL
 export enum FoodType {
   COOKING_CLASS = "COOKING_CLASS",
+  TASTING_MENU = "TASTING_MENU",
+  WINE_PAIRING = "WINE_PAIRING",
   FINE_DINING = "FINE_DINING",
   FOOD_TOUR = "FOOD_TOUR",
   MARKET_VISIT = "MARKET_VISIT",
@@ -74,6 +79,7 @@ export enum FoodDifficulty {
 export enum FoodStatus {
   AVAILABLE = "AVAILABLE",
   UNAVAILABLE = "UNAVAILABLE",
+  COMING_SOON = "COMING_SOON",
 }
 
 export enum HotelStatus {
@@ -100,11 +106,14 @@ export enum PackageType {
   CULTURAL = "CULTURAL",
   FAMILY = "FAMILY",
   GROUP = "GROUP",
+  HONEYMOON = "HONEYMOON",
+  WELLNESS = "WELLNESS",
   LUXURY = "LUXURY",
   ROMANTIC = "ROMANTIC",
 }
 export enum PackageStatus {
   DRAFT = "DRAFT",
+  PUBLISHED = "PUBLISHED",
   ACTIVE = "ACTIVE",
   ARCHIVED = "ARCHIVED",
   INACTIVE = "INACTIVE",
@@ -260,6 +269,7 @@ export interface Booking {
 // Food
 export interface Foods {
   id: string;
+  name: string;
   title: string;
   description: string;
   type: FoodType;
@@ -306,10 +316,13 @@ export interface Review {
 // Package
 export interface Package {
   id: string;
+  name: string;
   title: string;
   description: string;
   type: PackageType;
   status: PackageStatus;
+  featured: boolean;
+  tags: string[];
   price: number;
   images?: { url: string; caption?: string; isPrimary: boolean }[];
   createdAt?: string;

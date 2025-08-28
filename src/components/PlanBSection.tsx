@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Star, MapPin, Calendar, Users, ArrowRight, Package, Sparkles } from 'lucide-react';
-import { SpecialPackage } from '@/models/travel-programs';
+import { AdminPackage } from '@/types/travel';
 import { specialPackagesAPI } from '@/services/travel-programs-api';
 import { useCart } from '@/contexts/CartContext';
 
 const PlanBSection = () => {
-  const [packages, setPackages] = useState<SpecialPackage[]>([]);
+  const [packages, setPackages] = useState<AdminPackage[]>([]);
   const [loading, setLoading] = useState(false);
   const { addItem } = useCart();
 
@@ -17,7 +17,7 @@ const PlanBSection = () => {
     setLoading(true);
     try {
       const data = await specialPackagesAPI.getAll();
-      setPackages(data.filter((pkg: SpecialPackage) => pkg.status === 'PUBLISHED'));
+      setPackages(data.filter((pkg: AdminPackage) => pkg.isActive));
     } catch (error) {
       console.error('Failed to fetch special packages:', error);
     } finally {
@@ -25,7 +25,7 @@ const PlanBSection = () => {
     }
   };
 
-  const handleAddToCart = (pkg: SpecialPackage) => {
+  const handleAddToCart = (pkg: AdminPackage) => {
     addItem({
       id: pkg.id,
       name: pkg.title,
@@ -68,12 +68,6 @@ const PlanBSection = () => {
               >
                 {/* Package Header */}
                 <div className="relative p-6 bg-gradient-to-r from-purple-500 to-blue-600 text-white">
-                  {pkg.featured && (
-                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full text-xs font-bold">
-                      <Sparkles className="w-3 h-3 inline mr-1" />
-                      FEATURED
-                    </div>
-                  )}
                   <h3 className="font-bold text-xl mb-2">{pkg.title}</h3>
                   <p className="text-purple-100 text-sm">{pkg.description}</p>
                 </div>
@@ -106,9 +100,9 @@ const PlanBSection = () => {
                       <Calendar className="w-4 h-4 mr-2 text-purple-500" />
                       Durée
                     </h4>
-                    <p className="text-gray-600 text-sm">
-                      {Object.values(pkg.cityDates).reduce((total, dates) => total + dates.duration, 0)} jours
-                    </p>
+                     <p className="text-gray-600 text-sm">
+                       {pkg.cityDateRanges.reduce((total, range) => total + range.duration, 0)} jours
+                     </p>
                   </div>
 
                   {/* Activities */}
@@ -127,12 +121,12 @@ const PlanBSection = () => {
                       <span className="text-gray-600 text-sm">Prix de base:</span>
                       <span className="text-gray-600 line-through">{pkg.basePrice} {pkg.currency}</span>
                     </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-green-600 text-sm font-semibold">Remise {pkg.discountPercent}%:</span>
-                      <span className="text-green-600 font-semibold">
-                        -{(pkg.basePrice * pkg.discountPercent / 100).toFixed(0)} {pkg.currency}
-                      </span>
-                    </div>
+                     <div className="flex items-center justify-between mb-2">
+                       <span className="text-green-600 text-sm font-semibold">Remise {pkg.discountPercentage}%:</span>
+                       <span className="text-green-600 font-semibold">
+                         -{(pkg.basePrice * pkg.discountPercentage / 100).toFixed(0)} {pkg.currency}
+                       </span>
+                     </div>
                     <div className="flex items-center justify-between border-t border-purple-200 pt-2">
                       <span className="font-bold text-gray-800">Prix final:</span>
                       <span className="text-2xl font-bold text-purple-600">

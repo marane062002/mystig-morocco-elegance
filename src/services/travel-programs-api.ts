@@ -1,5 +1,10 @@
 import { apiRequest } from './api';
-import { Demand, SpecialPackage, City, Activity, ServiceOffering, Hotel, Transport } from '@/models/travel-programs';
+import { ClientDemand, AdminPackage, City, Activity, Service, Hotel, Transport } from '@/types/travel';
+
+// Type aliases for compatibility
+type Demand = ClientDemand;
+type SpecialPackage = AdminPackage;
+type ServiceOffering = Service;
 
 // Cities API
 export const citiesAPI = {
@@ -120,6 +125,8 @@ export const demandsAPI = {
   
   getDemandCities: async (demandId: string) => 
     apiRequest(`/demands/${demandId}/cities`),
+  
+  send: async (demandId: string) => apiRequest(`/demands/${demandId}/send`, { method: 'POST' }),
 };
 
 // Special Packages API (Plan B)
@@ -135,4 +142,8 @@ export const packagesAPI = {
     body: JSON.stringify(data),
   }),
   delete: async (id: string) => apiRequest(`/travel/packages/${id}`, { method: 'DELETE' }),
+  send: async (demandId: string) => apiRequest(`/demands/${demandId}/send`, { method: 'POST' }),
 };
+
+// Export alias for backward compatibility
+export const specialPackagesAPI = packagesAPI;
