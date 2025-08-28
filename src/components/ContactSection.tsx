@@ -79,98 +79,126 @@ const ContactSection = () => {
               </div>
             </div>
 
-            {/* Contact Form */}
+            {/* Contact Form - Plan A Style */}
             <div className="fade-in-up">
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Nom complet
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                      placeholder="Votre nom complet"
-                    />
+              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-6 border border-border">
+                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center">
+                  <svg className="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                  Demande de Devis Rapide
+                </h3>
+                <form className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Nom complet *
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300"
+                        placeholder="Votre nom complet"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300"
+                        placeholder="votre@email.com"
+                        required
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Téléphone
-                    </label>
-                    <input
-                      type="tel"
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                      placeholder="+212 6XX XXX XXX"
-                    />
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Téléphone *
+                      </label>
+                      <input
+                        type="tel"
+                        className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300"
+                        placeholder="+212 6XX XXX XXX"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Nombre de voyageurs *
+                      </label>
+                      <input
+                        type="number"
+                        className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300"
+                        min="1"
+                        defaultValue="2"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                    placeholder="votre@email.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Type de voyage
-                  </label>
-                  <select className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
-                    <option>Voyage en couple</option>
-                    <option>Voyage en famille</option>
-                    <option>Voyage entre amis</option>
-                    <option>Voyage solo</option>
-                    <option>Voyage d'affaires</option>
-                    <option>Lune de miel</option>
-                  </select>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Date de départ souhaitée
+                    <label className="block text-sm font-semibold text-foreground mb-2">
+                      Type de voyage préféré
                     </label>
-                    <input
-                      type="date"
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Durée du séjour
-                    </label>
-                    <select className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300">
-                      <option>2-3 jours</option>
-                      <option>4-7 jours</option>
-                      <option>8-14 jours</option>
-                      <option>Plus de 2 semaines</option>
+                    <select className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300">
+                      <option>Voyage culturel</option>
+                      <option>Voyage d'aventure</option>
+                      <option>Voyage de luxe</option>
+                      <option>Voyage en famille</option>
+                      <option>Lune de miel</option>
+                      <option>Voyage d'affaires</option>
                     </select>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Décrivez votre voyage idéal
-                  </label>
-                  <textarea
-                    rows={4}
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 resize-none"
-                    placeholder="Parlez-nous de vos envies, centres d'intérêt, budget approximatif..."
-                  ></textarea>
-                </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Date de départ souhaitée
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-2">
+                        Durée estimée
+                      </label>
+                      <select className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300">
+                        <option>3-5 jours</option>
+                        <option>6-8 jours</option>
+                        <option>9-12 jours</option>
+                        <option>Plus de 2 semaines</option>
+                      </select>
+                    </div>
+                  </div>
 
-                <button
-                  type="submit"
-                  className="w-full btn-luxury rounded-lg text-center"
-                >
-                  Demander un Devis Gratuit
-                </button>
-              </form>
+                  <div>
+                    <label className="block text-sm font-semibold text-foreground mb-2">
+                      Vos envies de voyage
+                    </label>
+                    <textarea
+                      rows={3}
+                      className="w-full px-4 py-3 bg-background border-2 border-border rounded-xl focus:border-primary focus:outline-none transition-all duration-300 resize-none"
+                      placeholder="Décrivez-nous vos préférences, centres d'intérêt et attentes pour ce voyage..."
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 flex items-center justify-center space-x-2"
+                  >
+                    <span>Obtenir mon devis personnalisé</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>

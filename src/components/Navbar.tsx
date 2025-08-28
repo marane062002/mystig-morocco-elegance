@@ -24,26 +24,10 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'About Us', href: '#about' },
-    // { name: 'Our Services', href: '#services' },
-    { 
-      name: 'Products', 
-      href: '/products',
-      hasSubmenu: true,
-      submenu: [
-        { name: 'All Products', href: '/products' },
-        { name: 'Hotels & Riads', href: '/products?category=hotels' },
-        { name: 'Travel Packages', href: '/products?category=packages' },
-        { name: 'Transport', href: '/products?category=transport' },
-        { name: 'Events', href: '/products?category=events' },
-        { name: 'Gastronomy', href: '/products?category=food' },
-        { name: 'Artisan Crafts', href: '/products?category=artisan' }
-      ]
-    },
-    // { name: 'Destinations', href: '#destinations' },
-    // { name: 'Accommodations', href: '#accommodations' },
-    // { name: 'Activities', href: '#activities' },
-    // { name: 'Gastronomy', href: '#gastronomy' },
-    // { name: 'Transport', href: '#transport' },
+    { name: 'Experiences', href: '#experiences' },
+    { name: 'Destinations', href: '#destinations' },
+    { name: 'Special Packages', href: '#special-packages' },
+    { name: 'Gallery', href: '#gallery' },
     { name: 'Plan A', href: '#', onClick: () => setShowPlanAForm(true) },
     { name: 'Contact', href: '#contact' },
   ];
@@ -81,32 +65,10 @@ const Navbar = () => {
                   <a
                   href={link.href}
                   className="text-foreground font-light text-sm tracking-wide uppercase hover:text-primary transition-all duration-300 relative flex items-center space-x-1"
-                  onMouseEnter={() => link.hasSubmenu && setShowProductsMenu(true)}
-                  onMouseLeave={() => link.hasSubmenu && setShowProductsMenu(false)}
                   >
                   <span>{link.name}</span>
-                  {link.hasSubmenu && <ChevronDown className="w-4 h-4" />}
                   <span className="absolute -bottom-2 left-1/2 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
                   </a>
-                )}
-                
-                {/* Products Submenu */}
-                {link.hasSubmenu && showProductsMenu && (
-                  <div 
-                    className="absolute top-full left-0 mt-2 w-64 bg-background/95 backdrop-blur-xl rounded-xl shadow-xl border border-border/20 py-2 z-50"
-                    onMouseEnter={() => setShowProductsMenu(true)}
-                    onMouseLeave={() => setShowProductsMenu(false)}
-                  >
-                    {link.submenu?.map((sublink) => (
-                      <a
-                        key={sublink.name}
-                        href={sublink.href}
-                        className="block px-4 py-3 text-foreground hover:text-primary hover:bg-muted/50 transition-all duration-200 text-sm"
-                      >
-                        {sublink.name}
-                      </a>
-                    ))}
-                  </div>
                 )}
               </div>
             ))}
@@ -215,20 +177,6 @@ const Navbar = () => {
                     >
                     {link.name}
                     </a>
-                  )}
-                  {link.hasSubmenu && (
-                    <div className="ml-4 mt-2 space-y-2">
-                      {link.submenu?.map((sublink) => (
-                        <a
-                          key={sublink.name}
-                          href={sublink.href}
-                          className="block text-muted-foreground text-sm hover:text-primary transition-colors duration-300"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {sublink.name}
-                        </a>
-                      ))}
-                    </div>
                   )}
                 </div>
               ))}

@@ -46,31 +46,31 @@ const AboutSection = () => {
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h4 className="font-bold text-2xl text-foreground mb-2">15+</h4>
-                <p className="text-muted-foreground">Years of experience</p>
+                <h4 className="font-bold text-2xl text-foreground mb-2">1+</h4>
+                <p className="text-muted-foreground">Month of operation</p>
               </div>
               
               <div className="text-center p-6 bg-luxury-beige rounded-xl">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                   <Award className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h4 className="font-bold text-2xl text-foreground mb-2">5000+</h4>
-                <p className="text-muted-foreground">Satisfied travelers</p>
+                <h4 className="font-bold text-2xl text-foreground mb-2">25+</h4>
+                <p className="text-muted-foreground">Happy travelers</p>
               </div>
               
               <div className="text-center p-6 bg-luxury-beige rounded-xl">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                   <Globe className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h4 className="font-bold text-2xl text-foreground mb-2">50+</h4>
-                <p className="text-muted-foreground">Unique destinations</p>
+                <h4 className="font-bold text-2xl text-foreground mb-2">12+</h4>
+                <p className="text-muted-foreground">Curated destinations</p>
               </div>
               
               <div className="text-center p-6 bg-luxury-beige rounded-xl">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
                   <Heart className="w-6 h-6 text-primary-foreground" />
                 </div>
-                <h4 className="font-bold text-2xl text-foreground mb-2">98%</h4>
+                <h4 className="font-bold text-2xl text-foreground mb-2">100%</h4>
                 <p className="text-muted-foreground">Satisfaction rate</p>
               </div>
             </div>

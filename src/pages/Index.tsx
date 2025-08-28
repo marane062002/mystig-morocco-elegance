@@ -17,6 +17,7 @@ import Footer from '@/components/Footer';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import ExperienceSection from '@/components/ExperienceSection';
 import ProductsSection from '@/components/ProductsSection';
+import SpecialPackagesSection from '@/components/SpecialPackagesSection';
 
 const Index = () => {
   useScrollAnimation();
@@ -66,7 +67,7 @@ const Index = () => {
       <ImageTextSection />
       <ExperienceSection />
       <DestinationsGrid />
-      {/* <ProductsSection /> */}
+      <SpecialPackagesSection />
 
       <ContactSection />
       <Footer />
