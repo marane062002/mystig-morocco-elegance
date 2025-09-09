@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Import images for the specified cities
-import agadirImage from '@/assets/essaouira.jpg'; // Using existing image as placeholder
-import rabatImage from '@/assets/chefchaouen.jpg'; // Using existing image as placeholder
+import agadirImage from '@/assets/agadir-beach.jpg';
+import rabatImage from '@/assets/rabat-hassan-tower.jpg';
 import marrakechImage from '@/assets/marrakech.jpg';
-import fesImage from '@/assets/hero-riad.jpg'; // Using existing image as placeholder
+import fesImage from '@/assets/fes-medina.jpg';
 import essaouiraImage from '@/assets/essaouira.jpg';
 
 const GalleryCarousel = () => {

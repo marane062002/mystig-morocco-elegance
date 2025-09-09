@@ -1,18 +1,32 @@
 import marrakechImage from '@/assets/marrakech.jpg';
 import essaouiraImage from '@/assets/essaouira.jpg';
+import rabatImage from '@/assets/rabat-hassan-tower.jpg';
+import fesImage from '@/assets/fes-medina.jpg';
 
 const ImageTextSection = () => {
   const sections = [
     {
       image: marrakechImage,
       title: 'Marrakech, the Imperial Soul',
-      description: 'Dive into the effervescence of Jemaa el-Fna square, explore the fragrant souks where merchant calls resonate, and discover the secret gardens of La Mamounia. Marrakech reveals its treasures to travelers seeking authenticity and refinement.',
+      description: 'Dive into the bustling energy of Jemaa el-Fna square, explore the fragrant souks where merchant calls resonate, and discover the secret gardens of La Mamounia. Marrakech reveals its treasures to travelers seeking authenticity and refinement.',
       imageLeft: true
     },
     {
       image: essaouiraImage,
       title: 'Essaouira, the Atlantic Pearl',
       description: 'Nestled along Morocco\'s Atlantic coast, this enchanting coastal city unveils its windswept ramparts and vibrant harbor. Every corner offers a new perspective on this maritime marvel where time seems suspended between ocean and sky.',
+      imageLeft: false
+    },
+    {
+      image: rabatImage,
+      title: 'Rabat, the Royal Capital',
+      description: 'The administrative capital combines imperial grandeur with modern sophistication. From the magnificent Hassan Tower to the elegant Andalusian Gardens, Rabat embodies Morocco\'s political and cultural heritage.',
+      imageLeft: true
+    },
+    {
+      image: fesImage,
+      title: 'Fés, the Spiritual Heart',
+      description: 'Step into the world\'s largest car-free urban area in Fés el-Bali. This ancient medina houses the oldest continuously operating university and preserves centuries of Islamic scholarship and traditional craftsmanship.',
       imageLeft: false
     }
   ];

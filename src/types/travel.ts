@@ -43,6 +43,8 @@ export interface City {
   name: string;
   region?: string;
   country?: string;
+  description?: string;
+  imageUrl?: string;
   enabled: boolean;
   isActive?: boolean;
   createdAt?: string;
@@ -64,20 +66,39 @@ export interface RoomType {
 export interface Hotel {
   id: string;
   name: string;
-  city: City;
-  roomTypes: RoomType[];
-  stars: number;
-  active: boolean;
-  price?: number; // Add optional price for compatibility
+  description?: string;
+  city?: City;
+  cityId?: string;
+  address?: string;
+  rating?: number;
+  roomTypes?: RoomType[];
+  stars?: number;
+  active?: boolean;
+  isActive?: boolean;
+  price?: number;
+  pricePerNight?: number;
+  currency?: Currency;
+  amenities?: string[];
+  imageUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Activity {
   id: string;
   name: string;
   description: string;
-  city: City;
+  city?: City;
+  cityId?: string;
   price: number;
-  active: boolean;
+  currency?: Currency;
+  duration?: number;
+  maxParticipants?: number;
+  active?: boolean;
+  isActive?: boolean;
+  imageUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ServiceOffering {
@@ -86,6 +107,7 @@ export interface ServiceOffering {
   providerName: string;
   price: number;
   active: boolean;
+  city?: City;
 }
 
 export interface Service {
@@ -110,10 +132,20 @@ export enum TransportType {
 
 export interface Transport {
   id: string;
+  name?: string;
+  description?: string;
   type: TransportType;
   company?: string;
-  price: number;
-  active: boolean;
+  cityId?: string;
+  city?: City;
+  price?: number;
+  pricePerDay?: number;
+  currency?: Currency;
+  capacity?: number;
+  active?: boolean;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export enum TravelerType {
@@ -134,11 +166,15 @@ export interface MainTraveler {
 
 // Client Custom Program Interfaces
 export interface ClientInfo {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  numberOfTravelers?: number;
   mainTraveler: MainTraveler;
   travelers: Traveler[];
   tripPeriod: number;
-  tripStartDate: string; // Ajouté
-  tripEndDate: string;   // Ajouté
+  tripStartDate: string;
+  tripEndDate: string;
 }
 
 export interface CitySelection {

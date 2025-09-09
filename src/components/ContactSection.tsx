@@ -92,10 +92,10 @@ const ContactSection = () => {
                       <Plus className="w-8 h-8 text-primary-foreground" />
                     </div>
                     <h3 className="text-2xl font-bold text-foreground mb-2">
-                      Programme Personnalisé
+                      Custom Program
                     </h3>
                     <p className="text-muted-foreground">
-                      Créez votre voyage sur mesure en 3 étapes simples
+                      Create your tailor-made journey in 3 simple steps
                     </p>
                   </div>
 
@@ -106,8 +106,8 @@ const ContactSection = () => {
                         1
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Informations</h4>
-                        <p className="text-sm text-muted-foreground">Dites-nous qui vous êtes</p>
+                        <h4 className="font-semibold text-foreground mb-1">Information</h4>
+                        <p className="text-sm text-muted-foreground">Tell us who you are</p>
                       </div>
                     </div>
 
@@ -116,8 +116,8 @@ const ContactSection = () => {
                         2
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Choix</h4>
-                        <p className="text-sm text-muted-foreground">Choisissez vos destinations</p>
+                        <h4 className="font-semibold text-foreground mb-1">Choices</h4>
+                        <p className="text-sm text-muted-foreground">Choose your destinations</p>
                       </div>
                     </div>
 
@@ -126,8 +126,8 @@ const ContactSection = () => {
                         3
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Envoi de votre demande</h4>
-                        <p className="text-sm text-muted-foreground">Validez votre demande</p>
+                        <h4 className="font-semibold text-foreground mb-1">Send your request</h4>
+                        <p className="text-sm text-muted-foreground">Validate your request</p>
                       </div>
                     </div>
                   </div>
@@ -136,26 +136,26 @@ const ContactSection = () => {
                     onClick={() => setIsPlanAFormOpen(true)}
                     className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 flex items-center justify-center space-x-2"
                   >
-                    <span>Commencer Maintenant</span>
+                    <span>Start Now</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </button>
 
                   <p className="text-center text-sm text-muted-foreground mt-4">
-                    Réponse sous 72h maximum • Devis gratuit • Sans engagement
+                    Response within 72h maximum • Free quote • No commitment
                   </p>
                 </div>
 
                 {/* Alternative Contact Options */}
                 <div className="mt-6 text-center">
-                  <p className="text-muted-foreground mb-3">Ou contactez-nous directement :</p>
+                  <p className="text-muted-foreground mb-3">Or contact us directly:</p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <a
                       href="tel:+212524123456"
                       className="px-4 py-2 border border-border rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
                     >
-                      📞 Appeler
+                      📞 Call
                     </a>
                     <a
                       href="mailto:info@mystictravel.ma"

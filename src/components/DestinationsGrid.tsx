@@ -1,40 +1,40 @@
+import agadirImage from '@/assets/agadir-beach.jpg';
+import rabatImage from '@/assets/rabat-hassan-tower.jpg';
+import marrakechImage from '@/assets/marrakech.jpg';
+import fesImage from '@/assets/fes-medina.jpg';
 import essaouiraImage from '@/assets/essaouira.jpg';
-import desertImage from '@/assets/desert-sunset.jpg';
-import atlasImage from '@/assets/atlas-mountains.jpg';
-import agadirImage from '@/assets/hero-riad.jpg'; // Using as placeholder
-import rabatImage from '@/assets/chefchaouen.jpg'; // Using as placeholder
 
 const DestinationsGrid = () => {
   const destinations = [
     {
-      image: desertImage,
-      title: 'Merzouga',
-      subtitle: 'Sahara Desert',
-      description: 'Starlit nights and endless dunes'
-    },
-    {
-      image: atlasImage,
-      title: 'Ourika Valley',
-      subtitle: 'Atlas Mountains',
-      description: 'Authentic Berber villages'
-    },
-    {
-      image: essaouiraImage,
-      title: 'Essaouira Beaches',
-      subtitle: 'Atlantic Coast',
-      description: 'Port charm and ocean winds'
-    },
-    {
-      image: agadirImage,
-      title: 'Agadir',
-      subtitle: 'Atlantic Pearl',
-      description: 'Modern resort and golden beaches'
+      image: marrakechImage,
+      title: 'Marrakech',
+      subtitle: 'Imperial City',
+      description: 'Historic medina and vibrant souks'
     },
     {
       image: rabatImage,
       title: 'Rabat',
-      subtitle: 'Imperial Capital',
-      description: 'Political heart and royal heritage'
+      subtitle: 'Royal Capital',
+      description: 'Hassan Tower and imperial heritage'
+    },
+    {
+      image: fesImage,
+      title: 'Fés',
+      subtitle: 'Spiritual Heart',
+      description: 'Ancient medina and traditional crafts'
+    },
+    {
+      image: essaouiraImage,
+      title: 'Essaouira',
+      subtitle: 'Atlantic Pearl',
+      description: 'Coastal charm and ocean winds'
+    },
+    {
+      image: agadirImage,
+      title: 'Agadir',
+      subtitle: 'Beach Resort',
+      description: 'Modern resort and golden beaches'
     }
   ];
 
