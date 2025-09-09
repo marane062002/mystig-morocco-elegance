@@ -212,7 +212,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
         duration: 0,
         activityIds: []
       };
-      (selection as any)[field] = value;
+      selection[field] = value;
       if (field === 'startDate' || field === 'endDate') {
         selection.duration = calculateDuration(selection.startDate, selection.endDate);
       }
@@ -347,7 +347,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-800">Plan A - Custom Program</h2>
-              <p className="text-gray-600">Create your tailor-made journey</p>
+              <p className="text-gray-600">Create your customized trip</p>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <X className="w-5 h-5" />
@@ -378,7 +378,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                 <User className="w-6 h-6 mr-2 text-blue-500" />
                 Traveler Information
               </h3>
-              {/* Voyageur Principal */}
+              {/* Main Traveler */}
               <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
                 <h4 className="font-bold text-gray-800 mb-4 flex items-center">
                   <User className="w-5 h-5 mr-2 text-blue-500" />
@@ -438,11 +438,11 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   </div>
                 </div>
               </div>
-              {/* Nombre de Voyageurs */}
+              {/* Number of Travelers */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <h4 className="font-bold text-gray-800 mb-4">Number of Travelers</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Adultes */}
+                  {/* Adults */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
                     <h5 className="font-semibold text-gray-700 mb-3 flex items-center">
                       <User className="w-4 h-4 mr-2 text-blue-500" />
@@ -456,7 +456,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="text-lg font-bold">{formData.numberOfAdults} adulte(s)</span>
+                      <span className="text-lg font-bold">{formData.numberOfAdults} adult(s)</span>
                       <button
                         onClick={() => handleNumberOfAdultsChange(formData.numberOfAdults + 1)}
                         className="p-2 bg-gray-200 rounded-lg"
@@ -465,11 +465,11 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       </button>
                     </div>
                   </div>
-                  {/* Enfants */}
+                  {/* Children */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
                     <h5 className="font-semibold text-gray-700 mb-3 flex items-center">
                       <Baby className="w-4 h-4 mr-2 text-orange-500" />
-                      Nombre d'enfants
+                      Number of children
                     </h5>
                     <div className="flex items-center space-x-4">
                       <button
@@ -479,7 +479,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="text-lg font-bold">{formData.numberOfChildren} enfant(s)</span>
+                      <span className="text-lg font-bold">{formData.numberOfChildren} child(ren)</span>
                       <button
                         onClick={() => handleNumberOfChildrenChange(formData.numberOfChildren + 1)}
                         className="p-2 bg-gray-200 rounded-lg"
@@ -490,20 +490,20 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   </div>
                 </div>
                 <div className="mt-4 text-sm text-gray-500">
-                  <p>Total: {formData.numberOfAdults + formData.numberOfChildren} voyageur(s)</p>
+                  <p>Total: {formData.numberOfAdults + formData.numberOfChildren} traveler(s)</p>
                 </div>
               </div>
-              {/* Informations des enfants */}
+              {/* Children information */}
               {formData.numberOfChildren > 0 && (
                 <div className="space-y-4">
                   {formData.childAges.map((age, index) => (
                     <div key={index} className="bg-orange-50 rounded-xl p-6 border border-orange-200">
                       <h5 className="font-bold text-gray-800 mb-4 flex items-center">
                         <Baby className="w-5 h-5 mr-2 text-orange-500" />
-                        Enfant {index + 1}
+                        Child {index + 1}
                       </h5>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Âge *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Age *</label>
                         <input
                           type="number"
                           value={age}
@@ -518,12 +518,12 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   ))}
                 </div>
               )}
-              {/* Dates globales du voyage */}
+              {/* Trip dates */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Durée générale du voyage</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Trip Duration</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Du *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">From *</label>
                     <input
                       type="date"
                       value={formData.tripStartDate}
@@ -533,7 +533,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Au *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">To *</label>
                     <input
                       type="date"
                       value={formData.tripEndDate}
@@ -555,7 +555,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       : 'bg-blue-500 text-white hover:bg-blue-600'
                   }`}
                 >
-                  Étape Suivante
+                  Next Step
                 </button>
               </div>
             </div>
@@ -565,7 +565,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <MapPin className="w-6 h-6 mr-2 text-blue-500" />
-                Sélection des Villes
+                City Selection
               </h3>
               {dateError && (
                 <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
@@ -576,7 +576,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                 </div>
               )}
               <div className="mb-8">
-                <label className="block text-sm font-semibold text-gray-700 mb-4">Choisissez vos destinations *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-4">Choose your destinations *</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {cities.map((city) => (
                     <div key={city.id} className="relative">
@@ -628,7 +628,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Date d'arrivée *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Arrival Date *</label>
                         <input
                           type="date"
                           value={selection?.startDate || ''}
@@ -640,12 +640,12 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                         />
                         {minStartDate && (
                           <p className="text-xs text-gray-500 mt-1">
-                            Min: {new Date(minStartDate).toLocaleDateString('fr-FR')}
+                            Min: {new Date(minStartDate).toLocaleDateString('en-US')}
                           </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Date de départ *</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Departure Date *</label>
                         <input
                           type="date"
                           value={selection?.endDate || ''}
@@ -657,10 +657,10 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Durée</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Duration</label>
                         <input
                           type="text"
-                          value={`${selection?.duration || 0} nuitées`}
+                          value={`${selection?.duration || 0} nights`}
                           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-100 cursor-not-allowed"
                           disabled
                         />
@@ -669,16 +669,16 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-4 flex items-center">
                         <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                        Activités disponibles à {city?.name}
+                        Available activities in {city?.name}
                       </label>
                       {loading ? (
                         <div className="text-center py-4">
                           <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                          <p className="mt-2 text-gray-500">Chargement des activités...</p>
+                          <p className="mt-2 text-gray-500">Loading activities...</p>
                         </div>
                       ) : cityActivities.length === 0 ? (
                         <div className="text-center py-6 bg-white rounded-lg border border-dashed border-gray-300">
-                          <p className="text-gray-500">Aucune activité disponible pour cette ville</p>
+                          <p className="text-gray-500">No activities available for this city</p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -722,7 +722,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   onClick={prevStep}
                   className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 font-semibold mr-4 transition-all duration-300 hover:bg-gray-300"
                 >
-                  Étape Précédente
+                  Previous Step
                 </button>
                 <button
                   onClick={nextStep}
@@ -736,10 +736,10 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   {submitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Envoi en cours...
+                      Submitting...
                     </>
                   ) : (
-                    'Étape Suivante'
+                    'Next Step'
                   )}
                 </button>
               </div>
@@ -750,57 +750,57 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <CheckCircle className="w-6 h-6 mr-2 text-green-500" />
-                Résumé de Votre Demande
+                Request Summary
               </h3>
               {/* Traveler Information Summary */}
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                <h4 className="font-bold text-gray-800 mb-4">Informations du Voyageur Principal</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Main Traveler Information</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <span className="block text-sm font-semibold text-gray-700">Nom complet :</span>
+                    <span className="block text-sm font-semibold text-gray-700">Full Name:</span>
                     <span className="block text-gray-800">{formData.mainTraveler.fullName}</span>
                   </div>
                   <div>
-                    <span className="block text-sm font-semibold text-gray-700">Email :</span>
+                    <span className="block text-sm font-semibold text-gray-700">Email:</span>
                     <span className="block text-gray-800">{formData.mainTraveler.email}</span>
                   </div>
                   <div>
-                    <span className="block text-sm font-semibold text-gray-700">Téléphone :</span>
+                    <span className="block text-sm font-semibold text-gray-700">Phone:</span>
                     <span className="block text-gray-800">{formData.mainTraveler.phone}</span>
                   </div>
                 </div>
               </div>
               {/* Travelers Details */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Détails des Voyageurs</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Traveler Details</h4>
                 <div>
-                  <span className="block text-sm font-semibold text-gray-700 mb-2">Adultes :</span>
-                  <span className="block text-gray-800 mb-4">{formData.numberOfAdults} adulte(s)</span>
-                  <span className="block text-sm font-semibold text-gray-700 mb-2">Enfants :</span>
+                  <span className="block text-sm font-semibold text-gray-700 mb-2">Adults:</span>
+                  <span className="block text-gray-800 mb-4">{formData.numberOfAdults} adult(s)</span>
+                  <span className="block text-sm font-semibold text-gray-700 mb-2">Children:</span>
                   <span className="block text-gray-800">
                     {formData.childAges.length > 0
-                      ? formData.childAges.map((age, idx) => `Enfant ${idx + 1}: ${age} ans`).join(', ')
-                      : 'Aucun'}
+                      ? formData.childAges.map((age, idx) => `Child ${idx + 1}: ${age} years old`).join(', ')
+                      : 'None'}
                   </span>
                 </div>
               </div>
               {/* Trip Dates Summary */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Dates du Voyage</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Trip Dates</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <span className="block text-sm font-semibold text-gray-700">Date de début :</span>
-                    <span className="block text-gray-800">{formData.tripStartDate ? new Date(formData.tripStartDate).toLocaleDateString('fr-FR') : ''}</span>
+                    <span className="block text-sm font-semibold text-gray-700">Start Date:</span>
+                    <span className="block text-gray-800">{formData.tripStartDate ? new Date(formData.tripStartDate).toLocaleDateString('en-US') : ''}</span>
                   </div>
                   <div>
-                    <span className="block text-sm font-semibold text-gray-700">Date de fin :</span>
-                    <span className="block text-gray-800">{formData.tripEndDate ? new Date(formData.tripEndDate).toLocaleDateString('fr-FR') : ''}</span>
+                    <span className="block text-sm font-semibold text-gray-700">End Date:</span>
+                    <span className="block text-gray-800">{formData.tripEndDate ? new Date(formData.tripEndDate).toLocaleDateString('en-US') : ''}</span>
                   </div>
                 </div>
               </div>
               {/* Cities and Activities Summary */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Villes et Activités Sélectionnées</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Selected Cities and Activities</h4>
                 {formData.selectedCities.map(cityId => {
                   const city = cities.find(c => c.id === cityId);
                   const selection = formData.citySelections[cityId];
@@ -813,20 +813,20 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <span className="block text-sm font-semibold text-gray-700">Date d'arrivée :</span>
-                          <span className="block text-gray-800">{selection.startDate ? new Date(selection.startDate).toLocaleDateString('fr-FR') : ''}</span>
+                          <span className="block text-sm font-semibold text-gray-700">Arrival Date:</span>
+                          <span className="block text-gray-800">{selection.startDate ? new Date(selection.startDate).toLocaleDateString('en-US') : ''}</span>
                         </div>
                         <div>
-                          <span className="block text-sm font-semibold text-gray-700">Date de départ :</span>
-                          <span className="block text-gray-800">{selection.endDate ? new Date(selection.endDate).toLocaleDateString('fr-FR') : ''}</span>
+                          <span className="block text-sm font-semibold text-gray-700">Departure Date:</span>
+                          <span className="block text-gray-800">{selection.endDate ? new Date(selection.endDate).toLocaleDateString('en-US') : ''}</span>
                         </div>
                         <div>
-                          <span className="block text-sm font-semibold text-gray-700">Durée :</span>
-                          <span className="block text-gray-800">{selection.duration} nuitées</span>
+                          <span className="block text-sm font-semibold text-gray-700">Duration:</span>
+                          <span className="block text-gray-800">{selection.duration} nights</span>
                         </div>
                       </div>
                       <div className="mt-4">
-                        <span className="block text-sm font-semibold text-gray-700 mb-2">Activités :</span>
+                        <span className="block text-sm font-semibold text-gray-700 mb-2">Activities:</span>
                         <ul className="list-disc list-inside">
                           {cityActivities.length > 0 ? (
                             cityActivities.map(activity => (
@@ -836,7 +836,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                               </li>
                             ))
                           ) : (
-                            <li className="text-gray-500">Aucune activité sélectionnée</li>
+                            <li className="text-gray-500">No activities selected</li>
                           )}
                         </ul>
                       </div>
@@ -846,13 +846,13 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
               </div>
               {/* Comments Section */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Commentaires supplémentaires</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Additional comments</h4>
                 <textarea
                   value={formData.comment}
                   onChange={e => setFormData(prev => ({ ...prev, comment: e.target.value }))}
                   rows={3}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
-                  placeholder="Ajoutez un commentaire ou une demande spéciale..."
+                  placeholder="Add a comment or special request..."
                 />
               </div>
               <div className="flex justify-end mt-8">
@@ -860,7 +860,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   onClick={prevStep}
                   className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 font-semibold mr-4 transition-all duration-300 hover:bg-gray-300"
                 >
-                  Étape Précédente
+                  Previous Step
                 </button>
                 <button
                   onClick={handleSubmit}
@@ -874,10 +874,10 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   {submitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Envoi en cours...
+                      Submitting...
                     </>
                   ) : (
-                    'Soumettre la Demande'
+                    'Submit Request'
                   )}
                 </button>
               </div>
