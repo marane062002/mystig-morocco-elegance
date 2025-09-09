@@ -212,7 +212,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
         duration: 0,
         activityIds: []
       };
-      selection[field] = value;
+      (selection as any)[field] = value;
       if (field === 'startDate' || field === 'endDate') {
         selection.duration = calculateDuration(selection.startDate, selection.endDate);
       }
@@ -346,8 +346,8 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
         <div className="p-6 bg-gradient-to-r from-blue-100 to-purple-100 border-b">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">Plan A - Programme Personnalisé</h2>
-              <p className="text-gray-600">Créez votre voyage sur mesure</p>
+              <h2 className="text-2xl font-bold text-gray-800">Plan A - Custom Program</h2>
+              <p className="text-gray-600">Create your tailor-made journey</p>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <X className="w-5 h-5" />
@@ -376,17 +376,17 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <User className="w-6 h-6 mr-2 text-blue-500" />
-                Informations des Voyageurs
+                Traveler Information
               </h3>
               {/* Voyageur Principal */}
               <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
                 <h4 className="font-bold text-gray-800 mb-4 flex items-center">
                   <User className="w-5 h-5 mr-2 text-blue-500" />
-                  Voyageur Principal (Contact)
+                  Main Traveler (Contact)
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nom complet *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                     <input
                       type="text"
                       value={formData.mainTraveler.fullName}
@@ -412,7 +412,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Téléphone *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
                     <PhoneInput
                       country={'ma'}
                       preferredCountries={['ma', 'fr', 'es', 'us']}
@@ -427,7 +427,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                       buttonClass="!border-2 !border-gray-200 !rounded-l-xl !bg-white hover:!bg-gray-50"
                       dropdownClass="!bg-white !border !border-gray-200 !rounded-lg !shadow-lg"
                       searchClass="!bg-gray-50 !border !border-gray-200 !rounded-lg !mx-2 !my-2"
-                      placeholder="Entrez votre numéro de téléphone"
+                      placeholder="Enter your phone number"
                     />
                     {phoneError && (
                       <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -440,13 +440,13 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
               </div>
               {/* Nombre de Voyageurs */}
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="font-bold text-gray-800 mb-4">Nombre de Voyageurs</h4>
+                <h4 className="font-bold text-gray-800 mb-4">Number of Travelers</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Adultes */}
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
                     <h5 className="font-semibold text-gray-700 mb-3 flex items-center">
                       <User className="w-4 h-4 mr-2 text-blue-500" />
-                      Nombre d'adultes
+                      Number of adults
                     </h5>
                     <div className="flex items-center space-x-4">
                       <button
