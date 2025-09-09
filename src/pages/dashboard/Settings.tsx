@@ -315,7 +315,7 @@ const Settings = () => {
                           onChange={(e) => setFormData({...formData, description: e.target.value})}
                           rows={4}
                           className="w-full px-4 py-3 bg-white/60 border-2 border-orange-200/50 rounded-xl focus:outline-none focus:border-orange-500 focus:bg-white transition-all duration-300 focus:shadow-lg resize-none"
-                          placeholder="Décrivez votre activité..."
+                          placeholder="Décrivez votre expérience..."
                         />
                         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/0 to-red-500/0 group-focus-within:from-orange-500/10 group-focus-within:to-red-500/10 transition-all duration-300 pointer-events-none"></div>
                       </div>

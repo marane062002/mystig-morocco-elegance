@@ -16,7 +16,12 @@ export enum ServiceType {
   TRANSPORT_SERVICE = 'TRANSPORT_SERVICE',
   CATERING = 'CATERING',
   EQUIPMENT = 'EQUIPMENT',
-  INSURANCE = 'INSURANCE'
+  INSURANCE = 'INSURANCE',
+  PHOTOGRAPHY = 'PHOTOGRAPHY',
+  DRIVER = 'DRIVER',
+  TRANSLATION = 'TRANSLATION',
+  SECURITY = 'SECURITY',
+  OTHER = 'OTHER'
 }
 
 export enum Currency {
@@ -25,50 +30,58 @@ export enum Currency {
   MAD = 'MAD'
 }
 
+export enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE'
+}
+
+
+
 // Base Interfaces
 export interface City {
   id: string;
   name: string;
-  region: string;
-  country: string;
-  description?: string;
-  imageUrl?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  region?: string;
+  country?: string;
+  enabled: boolean;
 }
-
+export enum RoomTypeEnum {
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE', 
+  TRIPLE = 'TRIPLE',
+  FAMILY = 'FAMILY',
+  SUITE = 'SUITE'
+}
+export interface RoomType {
+  id: string;
+  type: RoomTypeEnum;
+  price: number;
+  capacity: number;
+}
 export interface Hotel {
   id: string;
   name: string;
-  description: string;
-  cityId: string;
-  city?: City;
-  address: string;
-  rating: number;
-  pricePerNight: number;
-  currency: Currency;
-  amenities: string[];
-  imageUrl?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  city: City;
+  roomTypes: RoomType[];
+  stars: number;
+  active: boolean;
 }
 
 export interface Activity {
   id: string;
   name: string;
   description: string;
-  cityId: string;
-  city?: City;
+  city: City;
   price: number;
-  currency: Currency;
-  duration: number; // in hours
-  maxParticipants?: number;
-  imageUrl?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  active: boolean;
+}
+
+export interface ServiceOffering {
+  id: string;
+  type: ServiceType;
+  providerName: string;
+  price: number;
+  active: boolean;
 }
 
 export interface Service {
@@ -83,29 +96,43 @@ export interface Service {
   createdAt: string;
   updatedAt: string;
 }
+export enum TransportType {
+  VAN = "VAN",
+  MINIBUS = "MINIBUS", 
+  AUTOCAR = "AUTOCAR"
+}
 
 export interface Transport {
   id: string;
-  name: string;
-  description: string;
-  type: string;
-  cityId: string;
-  city?: City;
-  pricePerDay: number;
-  currency: Currency;
-  capacity: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  type: TransportType;
+  company?: string;
+  price: number;
+  active: boolean;
+}
+
+export enum TravelerType {
+  ADULT = 'ADULT',
+  CHILD = 'CHILD',
+  INFANT = 'INFANT'
+}
+// Traveler Interfaces
+export interface Traveler {
+  age?: number;
+}
+
+export interface MainTraveler {
+  fullName: string;
+  email: string;
+  phone: string;
 }
 
 // Client Custom Program Interfaces
 export interface ClientInfo {
-  fullName: string;
-  email: string;
-  phone: string;
-  numberOfTravelers: number;
-  tripPeriod: number; // auto-calculated
+  mainTraveler: MainTraveler;
+  travelers: Traveler[];
+  tripPeriod: number;
+  tripStartDate: string; // Ajouté
+  tripEndDate: string;   // Ajouté
 }
 
 export interface CitySelection {
@@ -113,7 +140,7 @@ export interface CitySelection {
   city?: City;
   startDate: string;
   endDate: string;
-  duration: number; // auto-calculated in days
+  duration: number;
   activityIds: string[];
   activities?: Activity[];
 }
@@ -126,6 +153,46 @@ export interface ClientDemand {
   totalPrice?: number;
   createdAt: string;
   updatedAt: string;
+  comment?: string;
+}
+
+// Demand City (Admin completion)
+export interface DemandCity {
+  id?: string;
+  city: City;
+  startDate: string;
+  endDate: string;
+  durationDays: number;
+  activities: Activity[];
+  selectedHotel?: Hotel;
+  roomSelections: {
+    roomTypeId: string;
+    roomType: string;
+    price: number;
+    capacity: number;
+    count: number;
+  }[];
+  calculatedPrice?: number;
+}
+
+// Main Demand Interface
+export interface Demand {
+  id?: string;
+  clientInfo: ClientInfo;
+  status: DemandStatus;
+  totalPrice: number;
+  cities: DemandCity[];
+  comment?: string;
+  globalServices?: {
+    service: ServiceOffering;
+    quantity: number;
+  }[];
+  selectedTransport?: Transport;
+  benefitPercentage?: number;
+  taxPercentage?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  agentId?: string;
 }
 
 // Admin Assignment Interfaces

@@ -7,7 +7,7 @@ const Footer = () => {
     { name: 'Nos Services', href: '#services' },
     { name: 'Destinations', href: '#destinations' },
     { name: 'Hébergements', href: '#accommodations' },
-    { name: 'Activités', href: '#activities' },
+    { name: 'Expériences', href: '#activities' },
     { name: 'Gastronomie', href: '#gastronomy' },
     { name: 'Transport', href: '#transport' },
     { name: 'Contact', href: '#contact' },
@@ -30,7 +30,7 @@ const Footer = () => {
               MysticTravel
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-md">
-              Agence de voyage spécialisée dans la découverte authentique du Maroc depuis plus de 15 ans. 
+              Agence de voyage spécialisée dans la découverte authentique du Maroc. 
               Nous créons des expériences uniques et personnalisées qui respectent la culture locale 
               et révèlent les trésors cachés du royaume chérifien.
             </p>
@@ -92,8 +92,8 @@ const Footer = () => {
             <div className="text-sm text-muted-foreground space-y-2">
               <p>+212 524 123 456</p>
               <p>info@mystictravel.ma</p>
-              <p>123 Avenue Mohammed V, Gueliz</p>
-              <p>Marrakech 40000, Maroc</p>
+              <p>Résidence Emeraude, Immeuble 6, Etage 1,</p>
+              <p>Wlah Hlal Hssain, Sala Al Jadida, Maroc</p>
             </div>
           </div>
         </div>

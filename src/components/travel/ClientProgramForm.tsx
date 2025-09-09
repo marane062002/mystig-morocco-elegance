@@ -145,12 +145,12 @@ const ClientProgramForm = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label htmlFor="fullName">Nom Complet</Label>
+          <Label htmlFor="fullName">Nom</Label>
           <Input
             id="fullName"
             value={formData.clientInfo.fullName || ''}
             onChange={(e) => handleClientInfoChange('fullName', e.target.value)}
-            placeholder="Votre nom complet"
+            placeholder="Votre nom"
           />
         </div>
         
@@ -191,7 +191,7 @@ const ClientProgramForm = () => {
           <Label htmlFor="tripPeriod">Durée du Voyage</Label>
           <Input
             id="tripPeriod"
-            value={`${formData.clientInfo.tripPeriod || 0} jours`}
+            value={`${formData.clientInfo.tripPeriod || 0} nuitées`}
             disabled
             className="bg-muted"
           />
@@ -305,7 +305,7 @@ const ClientProgramForm = () => {
             <div>
               <Label>Durée</Label>
               <Input
-                value={`${citySelection.duration} jours`}
+                value={`${citySelection.duration} nuitées`}
                 disabled
                 className="bg-muted"
               />
@@ -313,7 +313,7 @@ const ClientProgramForm = () => {
             
             {citySelection.cityId && (
               <div>
-                <Label>Activités</Label>
+                <Label>Expériences</Label>
                 <div className="grid grid-cols-1 gap-2 mt-2">
                   {staticActivities
                     .filter(activity => activity.cityId === citySelection.cityId)
@@ -358,7 +358,7 @@ const ClientProgramForm = () => {
           <p><strong>Email:</strong> {formData.clientInfo.email}</p>
           <p><strong>Téléphone:</strong> {formData.clientInfo.phone}</p>
           <p><strong>Voyageurs:</strong> {formData.clientInfo.numberOfTravelers}</p>
-          <p><strong>Durée totale:</strong> {formData.clientInfo.tripPeriod} jours</p>
+          <p><strong>Durée totale:</strong> {formData.clientInfo.tripPeriod} nuitées</p>
         </div>
         
         <div className="space-y-2">
@@ -372,9 +372,9 @@ const ClientProgramForm = () => {
             return (
               <div key={index} className="border rounded p-3">
                 <p><strong>{cityData?.name}</strong></p>
-                <p>Du {city.startDate} au {city.endDate} ({city.duration} jours)</p>
+                <p>Du {city.startDate} au {city.endDate} ({city.duration} nuitées)</p>
                 {selectedActivities.length > 0 && (
-                  <p><strong>Activités:</strong> {selectedActivities.map(a => a.name).join(', ')}</p>
+                  <p><strong>Expériences:</strong> {selectedActivities.map(a => a.name).join(', ')}</p>
                 )}
               </div>
             );

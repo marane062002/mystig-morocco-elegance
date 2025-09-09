@@ -407,18 +407,18 @@ export const ActivitiesCrud = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          Gestion des Activités
+          Gestion des Expériences
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => setEditingActivity(null)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nouvelle Activité
+                Nouvelle Expérience
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {editingActivity ? 'Modifier l\'Activité' : 'Nouvelle Activité'}
+                  {editingActivity ? 'Modifier l\'Expérience' : 'Nouvelle expérience'}
                 </DialogTitle>
               </DialogHeader>
               <ActivityForm activity={editingActivity} onSave={handleSave} />

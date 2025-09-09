@@ -1,11 +1,32 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, Users, Calendar, MapPin, Clock, ChevronRight, ChevronLeft, Send, CheckCircle } from 'lucide-react';
-import { DemandStatus, City, Activity, CitySelection, Demand } from '@/models/travel-programs';
-import { citiesAPI, activitiesAPI, demandsAPI } from '@/services/travel-programs-api';
+import {
+  User, Mail, Phone, Baby, Plus, Minus, X, CheckCircle, AlertCircle,
+  MapPin, Star, DollarSign
+} from 'lucide-react';
+import {
+  City,
+  Activity,
+  Gender,
+  DemandStatus,
+  Traveler,
+  MainTraveler,
+  ClientInfo,
+  DemandCity,
+  Demand
+} from '@/types/travel';
+import { activitiesAPI, citiesAPI, demandsAPI } from '@/services/travel-programs-api';
 
 interface PlanAFormProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface CitySelectionForm {
+  cityId: string;
+  startDate: string;
+  endDate: string;
+  duration: number;
+  activityIds: string[];
 }
 
 const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
@@ -14,21 +35,38 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
   const [activities, setActivities] = useState<{ [cityId: string]: Activity[] }>({});
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    clientName: '',
-    email: '',
-    phone: '',
-    numberOfTravelers: 1,
+    mainTraveler: {
+      fullName: '',
+      email: '',
+      phone: ''
+    },
+    numberOfAdults: 1,
+    numberOfChildren: 0,
+    childAges: [] as number[],
     selectedCities: [] as string[],
-    citySelections: {} as { [cityId: string]: CitySelection }
+    citySelections: {} as { [cityId: string]: CitySelectionForm },
+    comment: '',
+    tripStartDate: '',
+    tripEndDate: ''
   });
 
   useEffect(() => {
     if (isOpen) {
       fetchCities();
+      updateChildAges(formData.numberOfChildren);
     }
-  }, [isOpen]);
+    // eslint-disable-next-line
+  }, [isOpen, formData.numberOfChildren]);
+
+  const updateChildAges = (count: number) => {
+    setFormData(prev => ({
+      ...prev,
+      childAges: Array(count).fill(8).map((age, i) => prev.childAges[i] ?? age)
+    }));
+  };
 
   const fetchCities = async () => {
     try {
@@ -36,15 +74,26 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
       setCities(citiesData);
     } catch (error) {
       console.error('Failed to fetch cities:', error);
+      const fallbackCities: City[] = [
+        { id: '1', name: 'Marrakech', region: 'Marrakech-Safi', country: 'Morocco', enabled: true },
+        { id: '2', name: 'Fes', region: 'Fes-Meknes', country: 'Morocco', enabled: true },
+        { id: '3', name: 'Casablanca', region: 'Casablanca-Settat', country: 'Morocco', enabled: true },
+        { id: '4', name: 'Chefchaouen', region: 'Tanger-Tetouan-Al Hoceima', country: 'Morocco', enabled: true },
+      ];
+      setCities(fallbackCities);
     }
   };
 
   const fetchActivitiesForCity = async (cityId: string) => {
     try {
+      setLoading(true);
       const activitiesData = await activitiesAPI.getAll(cityId);
       setActivities(prev => ({ ...prev, [cityId]: activitiesData }));
     } catch (error) {
       console.error('Failed to fetch activities:', error);
+      setActivities(prev => ({ ...prev, [cityId]: [] }));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,114 +111,189 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
     }, 0);
   };
 
-  const handleCitySelection = (cityId: string, selected: boolean) => {
-    if (selected) {
-      setFormData(prev => ({
-        ...prev,
-        selectedCities: [...prev.selectedCities, cityId],
-        citySelections: {
-          ...prev.citySelections,
-          [cityId]: {
-            cityId,
-            startDate: '',
-            endDate: '',
-            duration: 0,
-            activities: []
-          }
-        }
-      }));
-      fetchActivitiesForCity(cityId);
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        selectedCities: prev.selectedCities.filter(id => id !== cityId),
-        citySelections: Object.fromEntries(
-          Object.entries(prev.citySelections).filter(([id]) => id !== cityId)
-        )
-      }));
+  const validateDateSequence = (): boolean => {
+    const selections = Object.values(formData.citySelections);
+    if (selections.length < 2) {
+      setDateError(null);
+      return true;
     }
+    const sortedSelections = selections.sort((a, b) =>
+      new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
+    for (let i = 0; i < sortedSelections.length - 1; i++) {
+      const currentCity = sortedSelections[i];
+      const nextCity = sortedSelections[i + 1];
+      const currentEndDate = new Date(currentCity.endDate);
+      const nextStartDate = new Date(nextCity.startDate);
+      if (currentEndDate.toDateString() !== nextStartDate.toDateString()) {
+        const currentCityName = cities.find(c => c.id === currentCity.cityId)?.name;
+        const nextCityName = cities.find(c => c.id === nextCity.cityId)?.name;
+        setDateError(`Décalage détecté : Départ de ${currentCityName} le ${currentEndDate.toLocaleDateString('fr-FR')} mais arrivée à ${nextCityName} le ${nextStartDate.toLocaleDateString('fr-FR')}. Les dates doivent être continues.`);
+        return false;
+      }
+    }
+    setDateError(null);
+    return true;
   };
 
-  const updateCitySelection = (cityId: string, field: string, value: any) => {
+  const getMinStartDateForCity = (cityId: string): string => {
+    const selections = Object.values(formData.citySelections);
+    const currentSelection = formData.citySelections[cityId];
+    if (!currentSelection) return '';
+    const sortedSelections = selections.sort((a, b) =>
+      new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
+    const currentIndex = sortedSelections.findIndex(s => s.cityId === cityId);
+    if (currentIndex > 0) {
+      const previousSelection = sortedSelections[currentIndex - 1];
+      return previousSelection.endDate;
+    }
+    return '';
+  };
+
+  const handleNumberOfAdultsChange = (count: number) => {
+    if (count < 1) return;
+    setFormData(prev => ({
+      ...prev,
+      numberOfAdults: count
+    }));
+  };
+
+  const handleNumberOfChildrenChange = (count: number) => {
+    if (count < 0) return;
+    setFormData(prev => ({
+      ...prev,
+      numberOfChildren: count
+    }));
+    setTimeout(() => updateChildAges(count), 0);
+  };
+
+  const updateChildAge = (index: number, value: number) => {
     setFormData(prev => {
-      const updated = {
-        ...prev,
-        citySelections: {
-          ...prev.citySelections,
-          [cityId]: {
-            ...prev.citySelections[cityId],
-            [field]: value
-          }
-        }
-      };
-
-      // Auto-calculate duration if dates change
-      if (field === 'startDate' || field === 'endDate') {
-        const selection = updated.citySelections[cityId];
-        if (selection.startDate && selection.endDate) {
-          selection.duration = calculateDuration(selection.startDate, selection.endDate);
-        }
-      }
-
-      return updated;
+      const newAges = [...prev.childAges];
+      newAges[index] = value;
+      return { ...prev, childAges: newAges };
     });
   };
 
+  const handleCitySelection = (cityId: string, checked: boolean) => {
+    setFormData(prev => {
+      const selectedCities = checked
+        ? [...prev.selectedCities, cityId]
+        : prev.selectedCities.filter(id => id !== cityId);
+      const citySelections = { ...prev.citySelections };
+      if (checked && !citySelections[cityId]) {
+        citySelections[cityId] = {
+          cityId,
+          startDate: prev.tripStartDate,
+          endDate: prev.tripStartDate,
+          duration: 0,
+          activityIds: []
+        };
+        fetchActivitiesForCity(cityId);
+      }
+      if (!checked) {
+        delete citySelections[cityId];
+      }
+      return { ...prev, selectedCities, citySelections };
+    });
+  };
+
+  const updateCitySelection = (cityId: string, field: keyof CitySelectionForm, value: any) => {
+    setFormData(prev => {
+      const citySelections = { ...prev.citySelections };
+      const selection = citySelections[cityId] || {
+        cityId,
+        startDate: prev.tripStartDate,
+        endDate: prev.tripStartDate,
+        duration: 0,
+        activityIds: []
+      };
+      selection[field] = value;
+      if (field === 'startDate' || field === 'endDate') {
+        selection.duration = calculateDuration(selection.startDate, selection.endDate);
+      }
+      citySelections[cityId] = selection;
+      return { ...prev, citySelections };
+    });
+  };
+
+  const isStep1Valid = (): boolean => {
+    if (!formData.mainTraveler.fullName || !formData.mainTraveler.email || !formData.mainTraveler.phone) {
+      return false;
+    }
+    return formData.childAges.every(age => age > 0);
+  };
+
+  const isStep2Valid = (): boolean => {
+    if (!formData.tripStartDate || !formData.tripEndDate) return false;
+    return formData.selectedCities.length > 0 &&
+      Object.values(formData.citySelections).every(selection =>
+        selection.startDate &&
+        selection.endDate &&
+        selection.duration > 0 &&
+        selection.startDate >= formData.tripStartDate &&
+        selection.endDate <= formData.tripEndDate
+      ) &&
+      !dateError;
+  };
+
   const handleSubmit = async () => {
+    if (!validateDateSequence()) {
+      alert('Veuillez corriger le décalage entre les dates avant de soumettre.');
+      return;
+    }
     setSubmitting(true);
     try {
-      // Build cities array for backend
-      const demandCities = Object.values(formData.citySelections).map(selection => {
-        const cityObj = cities.find(c => c.id === selection.cityId);
-        if (!cityObj) {
-          throw new Error(`City not found for id: ${selection.cityId}`);
-        }
+      // Prepare travelers array: adults + children (only age)
+      const travelers: Traveler[] = [
+        ...Array(formData.numberOfAdults).fill({}),
+        ...formData.childAges.map(age => ({ age }))
+      ];
+      const clientInfo: ClientInfo = {
+        mainTraveler: formData.mainTraveler,
+        travelers,
+        tripPeriod: calculateTripPeriod(),
+        tripStartDate: formData.tripStartDate,
+        tripEndDate: formData.tripEndDate
+      };
+      const demandCities: DemandCity[] = formData.selectedCities.map(cityId => {
+        const selection = formData.citySelections[cityId];
+        const city = cities.find(c => c.id === cityId);
+        const cityActivities = activities[cityId]?.filter(a =>
+          selection.activityIds.includes(a.id)
+        ) || [];
         return {
-          city: cityObj,
+          city: city!,
           startDate: selection.startDate,
           endDate: selection.endDate,
           durationDays: selection.duration,
-          activities: (activities[selection.cityId] ?? [])
-            .filter(a => selection.activities.includes(a.id)),
-          services: [],
-          selectedHotel: undefined,
-          selectedTransport: undefined
+          activities: cityActivities,
+          roomSelections: []
         };
       });
-
-      const demand: Partial<Demand> = {
-        fullName: formData.clientName,
-        email: formData.email,
-        phone: formData.phone,
-        travelers: formData.numberOfTravelers,
-        periodDays: calculateTripPeriod(),
-        status: DemandStatus.PENDING,
-        totalPrice: 0,
-        cities: demandCities
-      };
-
-      console.log('Demand payload:', demand);
-
-      await demandsAPI.create(demand);
-
-      // Reset form and close
+      await demandsAPI.createClientDemand(
+        clientInfo,
+        demandCities,
+        formData.comment
+      );
       setFormData({
-        clientName: '',
-        email: '',
-        phone: '',
-        numberOfTravelers: 1,
+        mainTraveler: { fullName: '', email: '', phone: '' },
+        numberOfAdults: 1,
+        numberOfChildren: 0,
+        childAges: [],
         selectedCities: [],
-        citySelections: {}
+        citySelections: {},
+        comment: '',
+        tripStartDate: '',
+        tripEndDate: ''
       });
       setCurrentStep(1);
+      setDateError(null);
       onClose();
-
-      alert('Votre demande a été envoyée avec succès! Nous vous contactons sous 24h.');
+      alert('Votre demande a été envoyée avec succès! Nous vous contactons sous 72h maximum.');
     } catch (error) {
       console.error('Submit error:', error);
-      if (error.response) {
-        console.error('API response:', error.response);
-      }
       alert('Erreur lors de l\'envoi. Veuillez réessayer.');
     } finally {
       setSubmitting(false);
@@ -177,22 +301,15 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
   };
 
   const nextStep = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep === 2 && !validateDateSequence()) {
+      alert('Veuillez corriger le décalage entre les dates avant de continuer.');
+      return;
+    }
+    setCurrentStep(prev => prev + 1);
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
-
-  const isStep1Valid = () => {
-    return formData.clientName && formData.email && formData.phone && formData.numberOfTravelers > 0;
-  };
-
-  const isStep2Valid = () => {
-    return formData.selectedCities.length > 0 && 
-           Object.values(formData.citySelections).every(selection => 
-             selection.startDate && selection.endDate && selection.duration > 0
-           );
+    setCurrentStep(prev => prev - 1);
   };
 
   if (!isOpen) return null;
@@ -200,22 +317,16 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
         <div className="p-6 bg-gradient-to-r from-blue-100 to-purple-100 border-b">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-800">Plan A - Programme Personnalisé</h2>
               <p className="text-gray-600">Créez votre voyage sur mesure</p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              ×
+            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <X className="w-5 h-5" />
             </button>
           </div>
-          
-          {/* Progress Bar */}
           <div className="mt-6 flex items-center space-x-4">
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center">
@@ -233,105 +344,201 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
             ))}
           </div>
         </div>
-
         <div className="p-6">
-          {/* Step 1 - Personal Information */}
+          {/* Step 1 - Traveler Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <User className="w-6 h-6 mr-2 text-blue-500" />
-                Informations Personnelles
+                Informations des Voyageurs
               </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Nom complet *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.clientName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, clientName: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300"
-                    placeholder="Votre nom complet"
-                    required
-                  />
+              {/* Voyageur Principal */}
+              <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                <h4 className="font-bold text-gray-800 mb-4 flex items-center">
+                  <User className="w-5 h-5 mr-2 text-blue-500" />
+                  Voyageur Principal (Contact)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Nom complet *</label>
+                    <input
+                      type="text"
+                      value={formData.mainTraveler.fullName}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        mainTraveler: { ...prev.mainTraveler, fullName: e.target.value }
+                      }))}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                    <input
+                      type="email"
+                      value={formData.mainTraveler.email}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        mainTraveler: { ...prev.mainTraveler, email: e.target.value }
+                      }))}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Téléphone *</label>
+                    <input
+                      type="tel"
+                      value={formData.mainTraveler.phone}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        mainTraveler: { ...prev.mainTraveler, phone: e.target.value }
+                      }))}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      required
+                    />
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300"
-                    placeholder="votre@email.com"
-                    required
-                  />
+              </div>
+              {/* Nombre de Voyageurs */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Nombre de Voyageurs</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Adultes */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h5 className="font-semibold text-gray-700 mb-3 flex items-center">
+                      <User className="w-4 h-4 mr-2 text-blue-500" />
+                      Nombre d'adultes
+                    </h5>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => handleNumberOfAdultsChange(formData.numberOfAdults - 1)}
+                        disabled={formData.numberOfAdults <= 1}
+                        className="p-2 bg-gray-200 rounded-lg disabled:opacity-50"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-lg font-bold">{formData.numberOfAdults} adulte(s)</span>
+                      <button
+                        onClick={() => handleNumberOfAdultsChange(formData.numberOfAdults + 1)}
+                        className="p-2 bg-gray-200 rounded-lg"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {/* Enfants */}
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h5 className="font-semibold text-gray-700 mb-3 flex items-center">
+                      <Baby className="w-4 h-4 mr-2 text-orange-500" />
+                      Nombre d'enfants
+                    </h5>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => handleNumberOfChildrenChange(formData.numberOfChildren - 1)}
+                        disabled={formData.numberOfChildren <= 0}
+                        className="p-2 bg-gray-200 rounded-lg disabled:opacity-50"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-lg font-bold">{formData.numberOfChildren} enfant(s)</span>
+                      <button
+                        onClick={() => handleNumberOfChildrenChange(formData.numberOfChildren + 1)}
+                        className="p-2 bg-gray-200 rounded-lg"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Téléphone *
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300"
-                    placeholder="+212 6XX XXX XXX"
-                    required
-                  />
+                <div className="mt-4 text-sm text-gray-500">
+                  <p>Total: {formData.numberOfAdults + formData.numberOfChildren} voyageur(s)</p>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Nombre de voyageurs *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.numberOfTravelers}
-                    onChange={(e) => setFormData(prev => ({ ...prev, numberOfTravelers: Number(e.target.value) }))
-                    }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300"
-                    min="1"
-                    required
-                  />
+              </div>
+              {/* Informations des enfants */}
+              {formData.numberOfChildren > 0 && (
+                <div className="space-y-4">
+                  {formData.childAges.map((age, index) => (
+                    <div key={index} className="bg-orange-50 rounded-xl p-6 border border-orange-200">
+                      <h5 className="font-bold text-gray-800 mb-4 flex items-center">
+                        <Baby className="w-5 h-5 mr-2 text-orange-500" />
+                        Enfant {index + 1}
+                      </h5>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Âge *</label>
+                        <input
+                          type="number"
+                          value={age}
+                          onChange={e => updateChildAge(index, Number(e.target.value))}
+                          min="0"
+                          max="17"
+                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none"
+                          required
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Durée du voyage (calculée automatiquement)
-                  </label>
-                  <input
-                    type="text"
-                    value={`${calculateTripPeriod()} jours`}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 cursor-not-allowed"
-                    disabled
-                  />
+              )}
+              {/* Dates globales du voyage */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Durée générale du voyage</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Du *</label>
+                    <input
+                      type="date"
+                      value={formData.tripStartDate}
+                      onChange={e => setFormData(prev => ({ ...prev, tripStartDate: e.target.value }))}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Au *</label>
+                    <input
+                      type="date"
+                      value={formData.tripEndDate}
+                      min={formData.tripStartDate}
+                      onChange={e => setFormData(prev => ({ ...prev, tripEndDate: e.target.value }))}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      required
+                    />
+                  </div>
                 </div>
+              </div>
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={nextStep}
+                  disabled={!isStep1Valid()}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center ${
+                    !isStep1Valid()
+                      ? 'bg-blue-100 text-blue-500 cursor-not-allowed'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                  }`}
+                >
+                  Étape Suivante
+                </button>
               </div>
             </div>
           )}
-
-          {/* Step 2 - Select Cities */}
+          {/* Step 2 - City Selection */}
           {currentStep === 2 && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
                 <MapPin className="w-6 h-6 mr-2 text-blue-500" />
                 Sélection des Villes
               </h3>
-
-              {/* Cities Selection */}
+              {dateError && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+                  <div className="flex items-center space-x-2 text-red-800">
+                    <AlertCircle className="w-5 h-5" />
+                    <p className="font-semibold">{dateError}</p>
+                  </div>
+                </div>
+              )}
               <div className="mb-8">
-                <label className="block text-sm font-semibold text-gray-700 mb-4">
-                  Choisissez vos destinations *
-                </label>
+                <label className="block text-sm font-semibold text-gray-700 mb-4">Choisissez vos destinations *</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {cities.map((city) => (
                     <div key={city.id} className="relative">
@@ -370,186 +577,274 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   ))}
                 </div>
               </div>
-
-              {/* City Details Forms */}
               {formData.selectedCities.map((cityId) => {
                 const city = cities.find(c => c.id === cityId);
                 const selection = formData.citySelections[cityId];
                 const cityActivities = activities[cityId] || [];
-
+                const minStartDate = getMinStartDateForCity(cityId);
                 return (
                   <div key={cityId} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
                       <MapPin className="w-5 h-5 mr-2 text-blue-500" />
                       {city?.name}
                     </h4>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Date d'arrivée *
-                        </label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Date d'arrivée *</label>
                         <input
                           type="date"
                           value={selection?.startDate || ''}
                           onChange={(e) => updateCitySelection(cityId, 'startDate', e.target.value)}
+                          min={formData.tripStartDate}
+                          max={formData.tripEndDate}
                           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                           required
                         />
+                        {minStartDate && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Min: {new Date(minStartDate).toLocaleDateString('fr-FR')}
+                          </p>
+                        )}
                       </div>
-
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Date de départ *
-                        </label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Date de départ *</label>
                         <input
                           type="date"
                           value={selection?.endDate || ''}
                           onChange={(e) => updateCitySelection(cityId, 'endDate', e.target.value)}
+                          min={selection?.startDate || formData.tripStartDate}
+                          max={formData.tripEndDate}
                           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                           required
                         />
                       </div>
-
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Durée (calculée)
-                        </label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Durée</label>
                         <input
                           type="text"
-                          value={`${selection?.duration || 0} jours`}
+                          value={`${selection?.duration || 0} nuitées`}
                           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-100 cursor-not-allowed"
                           disabled
                         />
                       </div>
                     </div>
-
-                    {/* Activities Selection */}
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Activités souhaitées
+                      <label className="block text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                        <Star className="w-4 h-4 mr-2 text-yellow-500" />
+                        Activités disponibles à {city?.name}
                       </label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {cityActivities.map((activity) => (
-                          <div key={activity.id} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id={`activity-${activity.id}`}
-                              checked={selection?.activities.includes(activity.id) || false}
-                              onChange={(e) => {
-                                const currentActivities = selection?.activities || [];
-                                const newActivities = e.target.checked
-                                  ? [...currentActivities, activity.id]
-                                  : currentActivities.filter(id => id !== activity.id);
-                                updateCitySelection(cityId, 'activities', newActivities);
-                              }}
-                              className="w-4 h-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <label htmlFor={`activity-${activity.id}`} className="text-sm text-gray-700 cursor-pointer">
-                              {activity.name} ({activity.price} {activity.currency})
-                            </label>
-                          </div>
-                        ))}
-                      </div>
+                      {loading ? (
+                        <div className="text-center py-4">
+                          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                          <p className="mt-2 text-gray-500">Chargement des activités...</p>
+                        </div>
+                      ) : cityActivities.length === 0 ? (
+                        <div className="text-center py-6 bg-white rounded-lg border border-dashed border-gray-300">
+                          <p className="text-gray-500">Aucune activité disponible pour cette ville</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {cityActivities.map((activity) => (
+                            <div key={activity.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                              <div className="p-4">
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex-1">
+                                    <h5 className="font-semibold text-gray-800">{activity.name}</h5>
+                                    {/* <div className="flex items-center mt-1">
+                                      <DollarSign className="w-4 h-4 text-green-600" />
+                                      <span className="text-green-600 font-medium ml-1">{activity.price} MAD</span>
+                                    </div> */}
+                                  </div>
+                                  <input
+                                    type="checkbox"
+                                    id={`activity-${activity.id}`}
+                                    checked={selection?.activityIds.includes(activity.id) || false}
+                                    onChange={(e) => {
+                                      const currentActivities = selection?.activityIds || [];
+                                      const newActivities = e.target.checked
+                                        ? [...currentActivities, activity.id]
+                                        : currentActivities.filter(id => id !== activity.id);
+                                      updateCitySelection(cityId, 'activityIds', newActivities);
+                                    }}
+                                    className="h-5 w-5 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
+                                  />
+                                </div>
+                                <p className="text-gray-600 text-sm">{activity.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
               })}
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={prevStep}
+                  className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 font-semibold mr-4 transition-all duration-300 hover:bg-gray-300"
+                >
+                  Étape Précédente
+                </button>
+                <button
+                  onClick={nextStep}
+                  disabled={!isStep2Valid() || submitting}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center ${
+                    !isStep2Valid() || submitting
+                      ? 'bg-blue-100 text-blue-500 cursor-not-allowed'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                  }`}
+                >
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    'Étape Suivante'
+                  )}
+                </button>
+              </div>
             </div>
           )}
-
-          {/* Step 3 - Submit */}
+          {/* Step 3 - Review & Submit */}
           {currentStep === 3 && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <Send className="w-6 h-6 mr-2 text-blue-500" />
-                Récapitulatif de votre demande
+                <CheckCircle className="w-6 h-6 mr-2 text-green-500" />
+                Résumé de Votre Demande
               </h3>
-
-              <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                <h4 className="font-bold text-gray-800 mb-4">Informations personnelles</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <p><span className="font-semibold">Nom:</span> {formData.clientName}</p>
-                  <p><span className="font-semibold">Email:</span> {formData.email}</p>
-                  <p><span className="font-semibold">Téléphone:</span> {formData.phone}</p>
-                  <p><span className="font-semibold">Voyageurs:</span> {formData.numberOfTravelers}</p>
-                  <p><span className="font-semibold">Durée totale:</span> {calculateTripPeriod()} jours</p>
+              {/* Traveler Information Summary */}
+              <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+                <h4 className="font-bold text-gray-800 mb-4">Informations du Voyageur Principal</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="block text-sm font-semibold text-gray-700">Nom complet :</span>
+                    <span className="block text-gray-800">{formData.mainTraveler.fullName}</span>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-semibold text-gray-700">Email :</span>
+                    <span className="block text-gray-800">{formData.mainTraveler.email}</span>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-semibold text-gray-700">Téléphone :</span>
+                    <span className="block text-gray-800">{formData.mainTraveler.phone}</span>
+                  </div>
                 </div>
               </div>
-
-              <div className="space-y-4">
-                <h4 className="font-bold text-gray-800">Villes sélectionnées</h4>
-                {Object.values(formData.citySelections).map((selection) => {
-                  const city = cities.find(c => c.id === selection.cityId);
-                  const selectedActivities = activities[selection.cityId]?.filter(a => 
-                    selection.activities.includes(a.id)
-                  ) || [];
-
+              {/* Travelers Details */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Détails des Voyageurs</h4>
+                <div>
+                  <span className="block text-sm font-semibold text-gray-700 mb-2">Adultes :</span>
+                  <span className="block text-gray-800 mb-4">{formData.numberOfAdults} adulte(s)</span>
+                  <span className="block text-sm font-semibold text-gray-700 mb-2">Enfants :</span>
+                  <span className="block text-gray-800">
+                    {formData.childAges.length > 0
+                      ? formData.childAges.map((age, idx) => `Enfant ${idx + 1}: ${age} ans`).join(', ')
+                      : 'Aucun'}
+                  </span>
+                </div>
+              </div>
+              {/* Trip Dates Summary */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Dates du Voyage</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="block text-sm font-semibold text-gray-700">Date de début :</span>
+                    <span className="block text-gray-800">{formData.tripStartDate ? new Date(formData.tripStartDate).toLocaleDateString('fr-FR') : ''}</span>
+                  </div>
+                  <div>
+                    <span className="block text-sm font-semibold text-gray-700">Date de fin :</span>
+                    <span className="block text-gray-800">{formData.tripEndDate ? new Date(formData.tripEndDate).toLocaleDateString('fr-FR') : ''}</span>
+                  </div>
+                </div>
+              </div>
+              {/* Cities and Activities Summary */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Villes et Activités Sélectionnées</h4>
+                {formData.selectedCities.map(cityId => {
+                  const city = cities.find(c => c.id === cityId);
+                  const selection = formData.citySelections[cityId];
+                  const cityActivities = activities[cityId]?.filter(a => selection.activityIds.includes(a.id)) || [];
                   return (
-                    <div key={selection.cityId} className="bg-gray-50 rounded-xl p-4 border">
-                      <h5 className="font-bold text-gray-800 mb-2">{city?.name}</h5>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
-                        <p><span className="font-semibold">Arrivée:</span> {new Date(selection.startDate).toLocaleDateString('fr-FR')}</p>
-                        <p><span className="font-semibold">Départ:</span> {new Date(selection.endDate).toLocaleDateString('fr-FR')}</p>
-                        <p><span className="font-semibold">Durée:</span> {selection.duration} jours</p>
+                    <div key={cityId} className="mb-4">
+                      <div className="flex items-center mb-2">
+                        <MapPin className="w-5 h-5 mr-2 text-blue-500" />
+                        <span className="font-semibold text-gray-800">{city?.name}</span>
                       </div>
-                      {selectedActivities.length > 0 && (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <p className="font-semibold text-gray-700 mb-1">Activités:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedActivities.map((activity) => (
-                              <span key={activity.id} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs">
-                                {activity.name}
-                              </span>
-                            ))}
-                          </div>
+                          <span className="block text-sm font-semibold text-gray-700">Date d'arrivée :</span>
+                          <span className="block text-gray-800">{selection.startDate ? new Date(selection.startDate).toLocaleDateString('fr-FR') : ''}</span>
                         </div>
-                      )}
+                        <div>
+                          <span className="block text-sm font-semibold text-gray-700">Date de départ :</span>
+                          <span className="block text-gray-800">{selection.endDate ? new Date(selection.endDate).toLocaleDateString('fr-FR') : ''}</span>
+                        </div>
+                        <div>
+                          <span className="block text-sm font-semibold text-gray-700">Durée :</span>
+                          <span className="block text-gray-800">{selection.duration} nuitées</span>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <span className="block text-sm font-semibold text-gray-700 mb-2">Activités :</span>
+                        <ul className="list-disc list-inside">
+                          {cityActivities.length > 0 ? (
+                            cityActivities.map(activity => (
+                              <li key={activity.id} className="text-gray-800">
+                                {activity.name} 
+                                {/* - <span className="text-green-600 font-medium">{activity.price} MAD</span>  */}
+                              </li>
+                            ))
+                          ) : (
+                            <li className="text-gray-500">Aucune activité sélectionnée</li>
+                          )}
+                        </ul>
+                      </div>
                     </div>
                   );
                 })}
               </div>
-
-              <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                <p className="text-green-800">
-                  <span className="font-semibold">Note:</span> Après soumission, notre équipe vous contactera 
-                  sous 24h pour finaliser votre programme avec les hôtels, transports et services adaptés.
-                </p>
+              {/* Comments Section */}
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="font-bold text-gray-800 mb-4">Commentaires supplémentaires</h4>
+                <textarea
+                  value={formData.comment}
+                  onChange={e => setFormData(prev => ({ ...prev, comment: e.target.value }))}
+                  rows={3}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                  placeholder="Ajoutez un commentaire ou une demande spéciale..."
+                />
+              </div>
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={prevStep}
+                  className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 font-semibold mr-4 transition-all duration-300 hover:bg-gray-300"
+                >
+                  Étape Précédente
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center ${
+                    submitting
+                      ? 'bg-blue-100 text-blue-500 cursor-not-allowed'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                  }`}
+                >
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    'Soumettre la Demande'
+                  )}
+                </button>
               </div>
             </div>
           )}
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between pt-6 border-t border-gray-200 mt-8">
-            <button
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span>Précédent</span>
-            </button>
-
-            {currentStep < 3 ? (
-              <button
-                onClick={nextStep}
-                disabled={currentStep === 1 ? !isStep1Valid() : !isStep2Valid()}
-                className="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span>Suivant</span>
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="flex items-center space-x-2 px-8 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all duration-300 disabled:opacity-50"
-              >
-                <Send className="w-5 h-5" />
-                <span>{submitting ? 'Envoi...' : 'Envoyer la demande'}</span>
-              </button>
-            )}
-          </div>
         </div>
       </div>
     </div>

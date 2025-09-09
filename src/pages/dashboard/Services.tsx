@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Plus, Edit, Trash2, MapPin, DollarSign, X, Save, User } from 'lucide-react';
-import { ServiceOffering, ServiceType, City } from '@/models/travel-programs';
-import { servicesAPI, citiesAPI } from '@/services/travel-programs-api';
+import { Plus, Edit, Trash2, DollarSign, X, Save, User } from 'lucide-react';
+import { ServiceOffering, ServiceType } from '@/models/travel-programs';
+import { servicesAPI } from '@/services/travel-programs-api';
 
 const defaultForm: Partial<ServiceOffering> = {
   type: ServiceType.GUIDE,
   providerName: '',
-  city: undefined, // <-- use city object
   price: 0,
   active: true,
 };
 
 const Services = () => {
   const [services, setServices] = useState<ServiceOffering[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<ServiceOffering | null>(null);
   const [form, setForm] = useState<Partial<ServiceOffering>>(defaultForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState<string>('');
 
   useEffect(() => {
     fetchData();
@@ -29,41 +26,30 @@ const Services = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [servicesData, citiesData] = await Promise.all([
-        servicesAPI.getAll(),
-        citiesAPI.getAll()
-      ]);
+      const servicesData = await servicesAPI.getAll();
       setServices(servicesData);
-      setCities(citiesData);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError('Failed to fetch services');
     } finally {
       setLoading(false);
     }
   };
 
-  // Adapt handleEdit to set city object
   const handleEdit = (service: ServiceOffering) => {
     setEditing(service);
     setForm({
       ...service,
-      city: service.city, // city object
     });
     setShowForm(true);
   };
 
-  // Adapt handleSubmit to send city object
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
-      };
       if (editing) {
-        await servicesAPI.update(editing.id, payload);
+        await servicesAPI.update(editing.id, form);
       } else {
-        await servicesAPI.create(payload);
+        await servicesAPI.create(form);
       }
       setShowForm(false);
       setEditing(null);
@@ -85,13 +71,8 @@ const Services = () => {
     }
   };
 
-  // Adapt filter logic
-  const filteredServices = selectedCity
-    ? services.filter(s => s.city?.id === selectedCity)
-    : services;
-
-  // Adapt getCityName
-  const getCityName = (city: City | undefined) => city?.name || 'Ville inconnue';
+  // Plus besoin de filtrer par ville
+  const filteredServices = services;
 
   return (
     <DashboardLayout>
@@ -103,7 +84,7 @@ const Services = () => {
               Gestion des Services
             </h1>
             <p className="text-muted-foreground">
-              Ajoutez et gérez les services par ville
+              Ajoutez et gérez les services disponibles
             </p>
           </div>
           <button
@@ -115,22 +96,7 @@ const Services = () => {
           </button>
         </div>
 
-        {/* Filter */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center space-x-4">
-            <label className="text-sm font-semibold text-gray-700">Filtrer par ville:</label>
-            <select
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Toutes les villes</option>
-              {cities.map(city => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* Supprimer le filtre par ville */}
 
         {/* Error Message */}
         {error && (
@@ -184,25 +150,6 @@ const Services = () => {
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none"
                       required
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ville *</label>
-                    <select
-                      value={form.city?.id || ''}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          city: cities.find(c => c.id === e.target.value),
-                        }))
-                      }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none"
-                      required
-                    >
-                      <option value="">Sélectionner une ville</option>
-                      {cities.map(city => (
-                        <option key={city.id} value={city.id}>{city.name}</option>
-                      ))}
-                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Prix *</label>
@@ -274,11 +221,8 @@ const Services = () => {
                       <div>
                         <h3 className="font-bold text-gray-800 text-lg mb-1">{service.providerName}</h3>
                         <div className="flex items-center text-sm text-gray-600 mb-2">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {getCityName(service.city)}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 mb-2">
-                          <span className="font-semibold">Type:</span> {service.type}
+                          <span className="font-semibold">Type:</span> 
+                          <span className="ml-1">{service.type}</span>
                         </div>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${service.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>

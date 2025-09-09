@@ -1,5 +1,11 @@
+import { DemandCity, RoomType } from '@/models/travel-programs';
 import { apiRequest } from './api';
-import { Demand, SpecialPackage, City, Activity, ServiceOffering, Hotel, Transport } from '@/models/travel-programs';
+import { ClientDemand, AdminPackage, City, Activity, Service, Hotel, Transport, ClientInfo } from '@/types/travel';
+
+// Type aliases for compatibility
+type Demand = ClientDemand;
+type SpecialPackage = AdminPackage;
+type ServiceOffering = Service;
 
 // Cities API
 export const citiesAPI = {
@@ -49,7 +55,7 @@ export const transportsAPI = {
 // Activities API
 export const activitiesAPI = {
   getAll: async (cityId?: string) => cityId
-    ? apiRequest(`/activities?cityId=${cityId}`)
+    ? apiRequest(`/activities/city/${cityId}`)
     : apiRequest('/activities'),
   getById: async (id: string) => apiRequest(`/activities/${id}`),
   create: async (data: Partial<Activity>) => apiRequest('/activities', {
@@ -63,7 +69,7 @@ export const activitiesAPI = {
   delete: async (id: string) => apiRequest(`/activities/${id}`, { method: 'DELETE' }),
 };
 
-// Services API
+// Services API (use travel-programs types)
 export const servicesAPI = {
   getAll: async () => apiRequest('/services'),
   getById: async (id: string) => apiRequest(`/services/${id}`),
@@ -78,48 +84,131 @@ export const servicesAPI = {
   delete: async (id: string) => apiRequest(`/services/${id}`, { method: 'DELETE' }),
 };
 
+
 // Demands API (Plan A)
 // Update the API service to include the new endpoints
 export const demandsAPI = {
-  getAll: async () => apiRequest('/demands'),
-  getById: async (id: string) => apiRequest(`/demands/${id}`),
-  create: async (data: Partial<Demand>) => apiRequest('/demands', {
+  // Basic CRUD operations
+  getAll: async (): Promise<Demand[]> => apiRequest('/demands'),
+  getById: async (id: string): Promise<Demand> => apiRequest(`/demands/${id}`),
+  create: async (data: Partial<Demand>): Promise<Demand> => apiRequest('/demands', {
     method: 'POST',
     body: JSON.stringify(data),
   }),
-  update: async (id: string, data: Partial<Demand>) => apiRequest(`/demands/${id}`, {
+  
+  // Step 1: Client creates demand with basic information
+  createClientDemand: async (clientInfo: ClientInfo, cities: DemandCity[], comment?: string): Promise<Demand> => 
+    apiRequest('/demands/client', {
+      method: 'POST',
+      body: JSON.stringify({ clientInfo, cities, comment }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  update: async (id: string, data: Partial<Demand>): Promise<Demand> => apiRequest(`/demands/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }),
-  delete: async (id: string) => apiRequest(`/demands/${id}`, { method: 'DELETE' }),
+  delete: async (id: string): Promise<void> => apiRequest(`/demands/${id}`, { method: 'DELETE' }),
   
-  // New endpoints for individual updates
-  updateServices: async (demandId: string, cityId: string, serviceIds: string[]) => 
-    apiRequest(`/demands/${demandId}/cities/${cityId}/services`, {
-      method: 'PATCH',
-      body: JSON.stringify(serviceIds),
-    }),
-  
-  updateActivities: async (demandId: string, cityId: string, activityIds: string[]) => 
+  // Step 2: Admin completes the demand
+  updateActivities: async (demandId: string, cityId: string, activityIds: string[]): Promise<DemandCity> => 
     apiRequest(`/demands/${demandId}/cities/${cityId}/activities`, {
       method: 'PATCH',
       body: JSON.stringify(activityIds),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }),
   
-  updateHotel: async (demandId: string, cityId: string, hotelId: string) => 
+  updateHotel: async (demandId: string, cityId: string, hotelId: string): Promise<DemandCity> => 
     apiRequest(`/demands/${demandId}/cities/${cityId}/hotel`, {
       method: 'PATCH',
       body: JSON.stringify(hotelId),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  updateRoomSelections: async (demandId: string, cityId: string, roomSelections: DemandCity['roomSelections']): Promise<DemandCity> => 
+    apiRequest(`/demands/${demandId}/cities/${cityId}/rooms`, {
+      method: 'PATCH',
+      body: JSON.stringify(roomSelections),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }),
   
-  updateTransport: async (demandId: string, cityId: string, transportId: string) => 
-    apiRequest(`/demands/${demandId}/cities/${cityId}/transport`, {
+  updateTransport: async (demandId: string, transportId: string): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/transport`, {
       method: 'PATCH',
       body: JSON.stringify(transportId),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }),
-  
-  getDemandCities: async (demandId: string) => 
+
+  updateGlobalServices: async (demandId: string, serviceIds: string[]): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/global-services`, {
+      method: 'PATCH',
+      body: JSON.stringify(serviceIds),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  updateGlobalServiceQuantity: async (demandId: string, serviceId: string, quantity: number): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/global-services/${serviceId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(quantity),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  updateComment: async (demandId: string, comment: string): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/comment`, {
+      method: 'PATCH',
+      body: JSON.stringify(comment),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  updateStatus: async (demandId: string, status: string): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify(status),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  // Frontend-only percentage management (no API calls needed)
+  // benefitPercentage and taxPercentage are now managed in frontend state
+
+  getDemandCities: async (demandId: string): Promise<DemandCity[]> => 
     apiRequest(`/demands/${demandId}/cities`),
+  
+  send: async (demandId: string): Promise<Demand> => 
+    apiRequest(`/demands/${demandId}/send`, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+
+  calculatePrice: async (demandId: string): Promise<number> => 
+    apiRequest(`/demands/${demandId}/price`),
+
+  calculateAndUpdatePrice: async (demandId: string): Promise<number> => 
+    apiRequest(`/demands/${demandId}/calculate`, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
 };
 
 // Special Packages API (Plan B)
@@ -135,4 +224,8 @@ export const packagesAPI = {
     body: JSON.stringify(data),
   }),
   delete: async (id: string) => apiRequest(`/travel/packages/${id}`, { method: 'DELETE' }),
+  send: async (demandId: string) => apiRequest(`/demands/${demandId}/send`, { method: 'POST' }),
 };
+
+// Export alias for backward compatibility
+export const specialPackagesAPI = packagesAPI;

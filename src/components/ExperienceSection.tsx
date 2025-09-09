@@ -6,18 +6,18 @@ const ExperienceSection = () => {
   const experiences = [
     {
       image: desertImage,
-      title: 'Balade dans le désert',
-      description: 'Traversez les dunes dorées à dos de chameau et passez une nuit magique sous les étoiles du Sahara dans un campement de luxe.'
+      title: 'Imperial Mystique',
+      description: 'Guided journeys in Marrakech, Fes, and Rabat with private storytellers revealing the secrets of Morocco\'s imperial cities.'
     },
     {
       image: hammamImage,
-      title: 'Rituels de bien-être',
-      description: 'Découvrez les secrets ancestraux du hammam traditionnel et laissez-vous envelopper par une expérience de détente absolue.'
+      title: 'Cultural Soulcraft',
+      description: 'Pottery, calligraphy, textiles workshops where ancient traditions meet modern creativity in intimate settings.'
     },
     {
       image: cuisineImage,
-      title: 'Saveurs marocaines',
-      description: 'Savourez une cuisine raffinée dans des palais somptueux, où chaque plat raconte l\'histoire des épices et des traditions culinaires.'
+      title: 'Culinary Rituals',
+      description: 'Cooking classes with Moroccan chefs, learning sacred recipes passed down through generations in authentic kitchens.'
     }
   ];
 
@@ -26,11 +26,23 @@ const ExperienceSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Expériences d'Exception
+            Top Experiences
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Chaque moment de votre voyage est pensé pour éveiller vos sens et créer des souvenirs inoubliables
+            Immerse yourself in the mystical essence of Morocco through carefully curated experiences that awaken the soul
           </p>
+          
+          {/* Additional Experience Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mt-12 max-w-4xl mx-auto">
+            <div className="p-6 bg-luxury-beige rounded-xl">
+              <h3 className="font-semibold text-foreground mb-2">Wellness & Relaxation</h3>
+              <p className="text-muted-foreground">Spas, hammams, yoga sanctuaries</p>
+            </div>
+            <div className="p-6 bg-luxury-beige rounded-xl">
+              <h3 className="font-semibold text-foreground mb-2">Sacred Journeys</h3>
+              <p className="text-muted-foreground">Spiritual experiences and meditation retreats</p>
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-12">

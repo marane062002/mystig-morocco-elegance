@@ -54,7 +54,7 @@ const ActivitiesSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 fade-in-up">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Activités & Expériences
+            Expériences
           </h2>
           <div className="w-24 h-px bg-primary mx-auto mb-8"></div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

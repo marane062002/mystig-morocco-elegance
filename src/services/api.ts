@@ -114,6 +114,15 @@ export const authAPI = {
       body: JSON.stringify({ token, password }),
     }),
   verifyEmail: async (token: string) => apiRequest(`/auth/verify-email/${token}`),
+  
+  refreshToken: async () => {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) throw new Error('No refresh token available');
+    return apiRequest('/auth/refresh-token', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+    });
+  },
 };
 
 // Users API

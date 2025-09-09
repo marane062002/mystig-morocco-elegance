@@ -21,13 +21,16 @@ const Hero = () => {
       <div className="relative z-10 h-full flex items-center justify-center">
         <div className="text-center text-white px-6 max-w-5xl mx-auto">
           <div className="fade-in-up animate">
-            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-widest leading-none">
-              MysticTravel
+            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-light mb-6 tracking-wider leading-tight">
+              DISCOVER. EXPLORE. AWAKEN
             </h1>
             <div className="w-24 h-px bg-white/60 mx-auto mb-8"></div>
-            <p className="font-elegant text-lg md:text-xl font-light tracking-[0.3em] uppercase opacity-80">
-              Voyages d'Exception
+            <p className="font-elegant text-xl md:text-2xl font-light mb-8 leading-relaxed">
+              Sacred journeys woven through the soul of Morocco
             </p>
+            <button className="btn-luxury px-8 py-4 text-lg font-medium tracking-wide hover:scale-105 transition-transform duration-300">
+              Begin your journey
+            </button>
           </div>
         </div>
       </div>

@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Plus, Edit, Trash2, Star, X, Save, MapPin } from 'lucide-react';
-import { Hotel, City } from '@/models/travel-programs';
+import { Plus, Edit, Trash2, Star, X, Save, MapPin, Bed } from 'lucide-react';
+import { Hotel, City, RoomType } from '@/models/travel-programs';
 import { hotelsAPI, citiesAPI } from '@/services/travel-programs-api';
 
 const defaultForm: Partial<Hotel> = {
   name: '',
-  city: undefined, // <-- use city object
-  price: 0,
+  city: undefined,
+  roomTypes: [],
   stars: 3,
   active: true,
 };
+
+const roomTypeOptions = [
+  { value: 'SINGLE', label: 'Chambre Single', capacity: 1 },
+  { value: 'DOUBLE', label: 'Chambre Double', capacity: 2 },
+  { value: 'TRIPLE', label: 'Chambre Triple', capacity: 3 }
+];
 
 const Hotelsc = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -20,6 +26,7 @@ const Hotelsc = () => {
   const [form, setForm] = useState<Partial<Hotel>>(defaultForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedRoomTypes, setSelectedRoomTypes] = useState<string[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -32,7 +39,14 @@ const Hotelsc = () => {
         hotelsAPI.getAll(),
         citiesAPI.getAll()
       ]);
-      setHotels(hotelsData);
+      
+      // S'assurer que tous les hôtels ont un tableau roomTypes
+      const hotelsWithRoomTypes = hotelsData.map(hotel => ({
+        ...hotel,
+        roomTypes: hotel.roomTypes || []
+      }));
+      
+      setHotels(hotelsWithRoomTypes);
       setCities(citiesData);
     } catch (err) {
       setError('Failed to fetch hotels or cities');
@@ -41,24 +55,103 @@ const Hotelsc = () => {
     }
   };
 
-  // Adapt handleEdit to set city object
   const handleEdit = (hotel: Hotel) => {
     setEditing(hotel);
     setForm({
       ...hotel,
-      city: hotel.city, // city object
+      city: hotel.city,
+      roomTypes: hotel.roomTypes || [] // Garantir un tableau
     });
+    setSelectedRoomTypes((hotel.roomTypes || []).map(rt => rt.type));
     setShowForm(true);
   };
 
-  // Adapt handleSubmit to send city object
+  const handleRoomTypeChange = (roomType: string, checked: boolean) => {
+    setSelectedRoomTypes(prev => {
+      const newSelected = checked 
+        ? [...prev, roomType]
+        : prev.filter(rt => rt !== roomType);
+      
+      setForm(prevForm => {
+        const existingRoomTypes = prevForm.roomTypes || [];
+        
+        if (checked) {
+          const roomTypeOption = roomTypeOptions.find(opt => opt.value === roomType);
+          const defaultCapacity = roomTypeOption ? roomTypeOption.capacity : 1;
+          
+          return {
+            ...prevForm,
+            roomTypes: [...existingRoomTypes, { 
+              type: roomType as any, 
+              price: 0,
+              capacity: defaultCapacity
+            }]
+          };
+        } else {
+          return {
+            ...prevForm,
+            roomTypes: existingRoomTypes.filter(rt => rt.type !== roomType)
+          };
+        }
+      });
+      
+      return newSelected;
+    });
+  };
+
+  const handleRoomPriceChange = (roomType: string, price: number) => {
+    setForm(prevForm => {
+      const roomTypes = prevForm.roomTypes || [];
+      const existingIndex = roomTypes.findIndex(rt => rt.type === roomType);
+      
+      if (existingIndex >= 0) {
+        const updatedRoomTypes = [...roomTypes];
+        updatedRoomTypes[existingIndex] = { ...updatedRoomTypes[existingIndex], price };
+        return { ...prevForm, roomTypes: updatedRoomTypes };
+      }
+      
+      return prevForm;
+    });
+  };
+
+  const getRoomPrice = (roomType: string): number => {
+    return (form.roomTypes || []).find(rt => rt.type === roomType)?.price || 0;
+  };
+
+  const getDefaultCapacity = (roomType: string): number => {
+    const roomTypeOption = roomTypeOptions.find(opt => opt.value === roomType);
+    return roomTypeOption ? roomTypeOption.capacity : 1;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!form.roomTypes || form.roomTypes.length === 0) {
+      setError('Veuillez sélectionner au moins un type de chambre');
+      return;
+    }
+    
+    const invalidPrice = form.roomTypes.find(rt => rt.price <= 0);
+    if (invalidPrice) {
+      setError(`Le prix pour la chambre ${invalidPrice.type} doit être supérieur à 0`);
+      return;
+    }
+
     try {
+      const selectedCity = cities.find(c => c.id === (form.city?.id || form.city));
+      
+      // Ensure all room types have capacity
+      const roomTypesWithCapacity = (form.roomTypes || []).map(roomType => ({
+        ...roomType,
+        capacity: roomType.capacity || getDefaultCapacity(roomType.type)
+      }));
+      
       const payload = {
         ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
+        city: selectedCity,
+        roomTypes: roomTypesWithCapacity
       };
+      
       if (editing) {
         await hotelsAPI.update(editing.id, payload);
       } else {
@@ -67,6 +160,7 @@ const Hotelsc = () => {
       setShowForm(false);
       setEditing(null);
       setForm(defaultForm);
+      setSelectedRoomTypes([]);
       fetchData();
     } catch (err) {
       setError('Failed to save hotel');
@@ -84,8 +178,11 @@ const Hotelsc = () => {
     }
   };
 
-  // Adapt getCityName
   const getCityName = (city: City | undefined) => city?.name || 'Ville inconnue';
+
+  const getRoomTypeLabel = (type: string) => {
+    return roomTypeOptions.find(opt => opt.value === type)?.label || type;
+  };
 
   return (
     <DashboardLayout>
@@ -105,6 +202,7 @@ const Hotelsc = () => {
               setShowForm(true);
               setEditing(null);
               setForm(defaultForm);
+              setSelectedRoomTypes([]);
             }}
             className="flex items-center space-x-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all duration-300"
           >
@@ -137,6 +235,7 @@ const Hotelsc = () => {
                       setShowForm(false);
                       setEditing(null);
                       setForm(defaultForm);
+                      setSelectedRoomTypes([]);
                     }}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
@@ -185,24 +284,58 @@ const Hotelsc = () => {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Prix *
-                    </label>
-                    <input
-                      type="number"
-                      value={form.price || 0}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          price: Number(e.target.value),
-                        }))
-                      }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
-                      min="0"
-                      required
-                    />
+                </div>
+
+                {/* Sélection des types de chambres */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Types de chambres disponibles *
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    {roomTypeOptions.map((option) => (
+                      <div key={option.value} className="flex items-center space-x-3 p-3 border-2 border-gray-200 rounded-xl hover:border-yellow-300 transition-colors">
+                        <input
+                          type="checkbox"
+                          id={`room-type-${option.value}`}
+                          checked={selectedRoomTypes.includes(option.value)}
+                          onChange={(e) => handleRoomTypeChange(option.value, e.target.checked)}
+                          className="w-4 h-4 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
+                        />
+                        <label htmlFor={`room-type-${option.value}`} className="text-sm font-medium text-gray-700 cursor-pointer">
+                          {option.label} ({option.capacity} pers.)
+                        </label>
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Prix par type de chambre */}
+                  {selectedRoomTypes.length > 0 && (
+                    <div className="space-y-4">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Prix par nuitée (MAD) *
+                      </label>
+                      {selectedRoomTypes.map((roomType) => (
+                        <div key={roomType} className="flex items-center space-x-4">
+                          <label className="w-32 text-sm font-medium text-gray-700">
+                            {getRoomTypeLabel(roomType)}:
+                          </label>
+                          <input
+                            type="number"
+                            value={getRoomPrice(roomType)}
+                            onChange={(e) => handleRoomPriceChange(roomType, Number(e.target.value))}
+                            className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none"
+                            min="1"
+                            placeholder="Prix"
+                            required
+                          />
+                          <span className="text-sm text-gray-500">MAD/nuit</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Étoiles *
@@ -249,6 +382,7 @@ const Hotelsc = () => {
                       setShowForm(false);
                       setEditing(null);
                       setForm(defaultForm);
+                      setSelectedRoomTypes([]);
                     }}
                     className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
                   >
@@ -298,11 +432,27 @@ const Hotelsc = () => {
                       <MapPin className="w-4 h-4 mr-1" />
                       {getCityName(hotel.city)}
                     </div>
+                    
+                    {/* Types de chambres et prix */}
+                    <div className="mb-3">
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <Bed className="w-4 h-4 mr-1" />
+                        <span className="font-semibold">Chambres:</span>
+                      </div>
+                      <div className="space-y-1">
+                        {(hotel.roomTypes || []).map((roomType, index) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span className="text-gray-600 capitalize">
+                              {roomType.type} ({roomType.capacity} pers.):
+                            </span>
+                            <span className="font-semibold text-green-600">{roomType.price} MAD/nuit</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="flex items-center mb-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                        {hotel.price} MAD
-                      </span>
-                      <span className="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
                         {hotel.stars} ⭐
                       </span>
                       <span

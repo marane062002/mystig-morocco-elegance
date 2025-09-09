@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Plus, Edit, Trash2, Activity as ActivityIcon, MapPin, DollarSign, X, Save } from 'lucide-react';
+import { Plus, Edit, Trash2, Activity as ActivityIcon, MapPin, DollarSign, X, Save, FileText } from 'lucide-react';
 import { Activity as ActivityType, City } from '@/models/travel-programs';
 import { activitiesAPI, citiesAPI } from '@/services/travel-programs-api';
 
 const defaultForm: Partial<ActivityType> = {
   name: '',
-  city: undefined, // <-- use city object
+  description: '', // Nouveau champ
+  city: undefined,
   price: 0,
   active: true,
 };
@@ -20,6 +21,7 @@ const Activities = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string>('');
+  const [showDescription, setShowDescription] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -41,23 +43,22 @@ const Activities = () => {
     }
   };
 
-  // Adapt handleEdit to set city object
   const handleEdit = (activity: ActivityType) => {
     setEditing(activity);
     setForm({
       ...activity,
-      city: activity.city, // city object
+      city: activity.city,
     });
     setShowForm(true);
   };
 
-  // Adapt handleSubmit to send city object
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedCity = cities.find(c => c.id === (form.city?.id || form.city));
       const payload = {
         ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
+        city: selectedCity,
       };
       if (editing) {
         await activitiesAPI.update(editing.id, payload);
@@ -74,7 +75,7 @@ const Activities = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette expérience ?')) {
       try {
         await activitiesAPI.delete(id);
         fetchData();
@@ -84,14 +85,16 @@ const Activities = () => {
     }
   };
 
-  // Adapt filter logic
   const filteredActivities = selectedCity
     ? activities.filter(a => a.city?.id === selectedCity)
     : activities;
 
-  // Adapt getCityName
   const getCityName = (city: City | undefined) => {
     return city?.name || 'Ville inconnue';
+  };
+
+  const toggleDescription = (id: string) => {
+    setShowDescription(showDescription === id ? null : id);
   };
 
   return (
@@ -101,10 +104,10 @@ const Activities = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-serif text-3xl font-bold text-foreground mb-2">
-              Gestion des Activités
+              Gestion des expériences
             </h1>
             <p className="text-muted-foreground">
-              Ajoutez et gérez les activités par ville
+              Ajoutez et gérez les expériences par ville
             </p>
           </div>
           <button
@@ -112,7 +115,7 @@ const Activities = () => {
             className="flex items-center space-x-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all duration-300"
           >
             <Plus className="w-5 h-5" />
-            <span>Ajouter une activité</span>
+            <span>Ajouter une expérience</span>
           </button>
         </div>
 
@@ -150,7 +153,7 @@ const Activities = () => {
               <div className="p-6 bg-gradient-to-r from-orange-100 to-red-100 border-b">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    {editing ? 'Modifier l\'activité' : 'Ajouter une activité'}
+                    {editing ? 'Modifier l\'expérience' : 'Ajouter une expérience'}
                   </h2>
                   <button
                     onClick={() => { setShowForm(false); setEditing(null); setForm(defaultForm); }}
@@ -191,6 +194,19 @@ const Activities = () => {
                     </select>
                   </div>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Description *</label>
+                  <textarea
+                    value={form.description || ''}
+                    onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+                    rows={4}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none resize-none"
+                    placeholder="Décrivez cette expérience en détail..."
+                    required
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Prix *</label>
@@ -212,7 +228,7 @@ const Activities = () => {
                       id="active"
                     />
                     <label htmlFor="active" className="text-sm font-semibold text-gray-700">
-                      Activité activée
+                      Expérience activée
                     </label>
                   </div>
                 </div>
@@ -240,7 +256,7 @@ const Activities = () => {
         {/* Activities List */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
           <div className="p-6 bg-gradient-to-r from-orange-100 to-red-100 border-b">
-            <h2 className="text-xl font-bold text-gray-800">Liste des activités</h2>
+            <h2 className="text-xl font-bold text-gray-800">Liste des expériences</h2>
           </div>
 
           <div className="p-6">
@@ -252,7 +268,7 @@ const Activities = () => {
             ) : filteredActivities.length === 0 ? (
               <div className="text-center py-12">
                 <ActivityIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Aucune activité trouvée</p>
+                <p className="text-gray-500">Aucune expérience trouvée</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -270,6 +286,25 @@ const Activities = () => {
                         {activity.active ? 'Activée' : 'Désactivée'}
                       </span>
                     </div>
+                    
+                    {/* Description avec toggle */}
+                    {activity.description && (
+                      <div className="mb-4">
+                        <button
+                          onClick={() => toggleDescription(activity.id)}
+                          className="flex items-center text-sm text-orange-600 hover:text-orange-700 mb-2"
+                        >
+                          <FileText className="w-4 h-4 mr-1" />
+                          {showDescription === activity.id ? 'Masquer la description' : 'Voir la description'}
+                        </button>
+                        {showDescription === activity.id && (
+                          <div className="bg-white rounded-lg p-3 border border-orange-200 text-sm text-gray-700">
+                            {activity.description}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="space-y-2 mb-4 text-sm">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-gray-600">

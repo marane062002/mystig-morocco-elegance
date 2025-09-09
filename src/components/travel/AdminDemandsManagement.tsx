@@ -179,7 +179,7 @@ const AdminDemandsManagement = () => {
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <div>{demand.clientInfo.tripPeriod} jours</div>
+                          <div>{demand.clientInfo.tripPeriod} nuitées</div>
                           <div className="text-sm text-muted-foreground">
                             {getTotalDemandPrice(demand.id)}€
                           </div>
@@ -219,7 +219,7 @@ const AdminDemandsManagement = () => {
                               <TableHead>Ville</TableHead>
                               <TableHead>Dates</TableHead>
                               <TableHead>Durée</TableHead>
-                              <TableHead>Activités Client</TableHead>
+                              <TableHead>Expériences Client</TableHead>
                               <TableHead>Hôtel</TableHead>
                               <TableHead>Transport</TableHead>
                               <TableHead>Services</TableHead>
@@ -240,7 +240,7 @@ const AdminDemandsManagement = () => {
                                   <TableCell>
                                     {citySelection.startDate} – {citySelection.endDate}
                                   </TableCell>
-                                  <TableCell>{citySelection.duration} jours</TableCell>
+                                  <TableCell>{citySelection.duration} nuitées</TableCell>
                                   <TableCell>
                                     <div className="text-sm">
                                       {cityActivities.map(a => a.name).join(', ')}

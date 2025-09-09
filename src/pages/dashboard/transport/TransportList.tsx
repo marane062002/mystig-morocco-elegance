@@ -1,26 +1,36 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Plus, Edit, Trash2, MapPin, DollarSign, X, Save, Bus } from 'lucide-react';
-import { Transport, TransportType, City } from '@/models/travel-programs';
-import { transportsAPI, citiesAPI } from '@/services/travel-programs-api';
+import { Plus, Edit, Trash2, DollarSign, X, Save, Bus } from 'lucide-react';
+import { Transport, TransportType } from '@/models/travel-programs';
+import { transportsAPI } from '@/services/travel-programs-api';
 
 const defaultForm: Partial<Transport> = {
-  type: TransportType.BUS,
+  type: TransportType.VAN,
   company: '',
-  city: undefined, // <-- use city object
   price: 0,
   active: true,
 };
 
+const getTransportTypeLabel = (type: TransportType): string => {
+  switch (type) {
+    case TransportType.VAN:
+      return 'Van (5-6 personnes)';
+    case TransportType.MINIBUS:
+      return 'Mini bus (20 personnes)';
+    case TransportType.AUTOCAR:
+      return 'Auto-car (50 personnes)';
+    default:
+      return type;
+  }
+};
+
 const TransportList = () => {
   const [transports, setTransports] = useState<Transport[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Transport | null>(null);
   const [form, setForm] = useState<Partial<Transport>>(defaultForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState<string>('');
 
   useEffect(() => {
     fetchData();
@@ -29,41 +39,30 @@ const TransportList = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [transportsData, citiesData] = await Promise.all([
-        transportsAPI.getAll(),
-        citiesAPI.getAll()
-      ]);
+      const transportsData = await transportsAPI.getAll();
       setTransports(transportsData);
-      setCities(citiesData);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError('Failed to fetch transports');
     } finally {
       setLoading(false);
     }
   };
 
-  // Adapt handleEdit to set city object
   const handleEdit = (transport: Transport) => {
     setEditing(transport);
     setForm({
       ...transport,
-      city: transport.city, // city object
     });
     setShowForm(true);
   };
 
-  // Adapt handleSubmit to send city object
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        ...form,
-        city: cities.find(c => c.id === (form.city?.id || form.city)), // ensure city object
-      };
       if (editing) {
-        await transportsAPI.update(editing.id, payload);
+        await transportsAPI.update(editing.id, form);
       } else {
-        await transportsAPI.create(payload);
+        await transportsAPI.create(form);
       }
       setShowForm(false);
       setEditing(null);
@@ -85,13 +84,8 @@ const TransportList = () => {
     }
   };
 
-  // Adapt filter logic
-  const filteredTransports = selectedCity 
-    ? transports.filter(t => t.city?.id === selectedCity)
-    : transports;
-
-  // Adapt getCityName
-  const getCityName = (city: City | undefined) => city?.name || 'Ville inconnue';
+  // Plus besoin de filtrer par ville
+  const filteredTransports = transports;
 
   return (
     <DashboardLayout>
@@ -103,7 +97,7 @@ const TransportList = () => {
               Gestion des Transports
             </h1>
             <p className="text-muted-foreground">
-              Ajoutez et gérez les moyens de transport par ville
+              Ajoutez et gérez les moyens de transport disponibles
             </p>
           </div>
           <button
@@ -115,22 +109,7 @@ const TransportList = () => {
           </button>
         </div>
 
-        {/* Filter */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center space-x-4">
-            <label className="text-sm font-semibold text-gray-700">Filtrer par ville:</label>
-            <select
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="">Toutes les villes</option>
-              {cities.map(city => (
-                <option key={city.id} value={city.id}>{city.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* Supprimer le filtre par ville */}
 
         {/* Error Message */}
         {error && (
@@ -165,13 +144,15 @@ const TransportList = () => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Type *</label>
                     <select
-                      value={form.type || TransportType.BUS}
+                      value={form.type || TransportType.VAN}
                       onChange={(e) => setForm(prev => ({ ...prev, type: e.target.value as TransportType }))}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
                       required
                     >
                       {Object.values(TransportType).map(type => (
-                        <option key={type} value={type}>{type}</option>
+                        <option key={type} value={type}>
+                          {getTransportTypeLabel(type)}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -182,29 +163,11 @@ const TransportList = () => {
                       value={form.company || ''}
                       onChange={(e) => setForm(prev => ({ ...prev, company: e.target.value }))}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                      placeholder="Nom de la compagnie (optionnel)"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ville *</label>
-                    <select
-                      value={form.city?.id || ''}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          city: cities.find(c => c.id === e.target.value),
-                        }))
-                      }
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
-                      required
-                    >
-                      <option value="">Sélectionner une ville</option>
-                      {cities.map(city => (
-                        <option key={city.id} value={city.id}>{city.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Prix *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Prix (Par jour) *</label>
                     <input
                       type="number"
                       value={form.price || 0}
@@ -271,13 +234,12 @@ const TransportList = () => {
                   <div key={transport.id} className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl border border-blue-200 p-6 hover:shadow-lg transition-all duration-300">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="font-bold text-gray-800 text-lg mb-1">{transport.company || 'Sans compagnie'}</h3>
+                        <h3 className="font-bold text-gray-800 text-lg mb-1">
+                          {transport.company || 'Transport sans compagnie'}
+                        </h3>
                         <div className="flex items-center text-sm text-gray-600 mb-2">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {getCityName(transport.city)}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 mb-2">
-                          <span className="font-semibold">Type:</span> {transport.type}
+                          <span className="font-semibold">Type:</span> 
+                          <span className="ml-1">{getTransportTypeLabel(transport.type)}</span>
                         </div>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${transport.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -288,7 +250,7 @@ const TransportList = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-gray-600">
                           <DollarSign className="w-4 h-4 mr-1" />
-                          Prix:
+                          Prix/jour:
                         </div>
                         <span className="font-bold text-green-600">{transport.price} MAD</span>
                       </div>

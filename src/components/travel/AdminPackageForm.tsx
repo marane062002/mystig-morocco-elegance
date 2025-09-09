@@ -348,7 +348,7 @@ const AdminPackageForm = () => {
                   <div>
                     <Label>Durée</Label>
                     <Input
-                      value={`${range.duration} jours`}
+                      value={`${range.duration} nuitées`}
                       disabled
                       className="bg-muted"
                     />
@@ -392,7 +392,7 @@ const AdminPackageForm = () => {
         {/* Activities Selection */}
         <Card>
           <CardHeader>
-            <CardTitle>Activités</CardTitle>
+            <CardTitle>Expériences & Activités</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-2">

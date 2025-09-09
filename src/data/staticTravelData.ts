@@ -21,6 +21,7 @@ export const staticCities: City[] = [
     country: 'Morocco',
     description: 'The Red City, famous for its medina and Jemaa el-Fnaa square',
     imageUrl: '/src/assets/marrakech.jpg',
+    enabled: true,
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
@@ -32,6 +33,7 @@ export const staticCities: City[] = [
     country: 'Morocco',
     description: 'The capital city with rich history and modern architecture',
     imageUrl: '/src/assets/desert-sunset.jpg',
+    enabled: true,
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
@@ -43,6 +45,7 @@ export const staticCities: City[] = [
     country: 'Morocco',
     description: 'The Blue Pearl of Morocco',
     imageUrl: '/src/assets/chefchaouen.jpg',
+    enabled: true,
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
@@ -54,6 +57,7 @@ export const staticCities: City[] = [
     country: 'Morocco',
     description: 'Coastal city known for its medina and windsurfing',
     imageUrl: '/src/assets/essaouira.jpg',
+    enabled: true,
     isActive: true,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
