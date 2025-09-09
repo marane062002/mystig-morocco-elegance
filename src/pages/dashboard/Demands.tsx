@@ -82,6 +82,8 @@ const Demands = () => {
       // Transform demands for display
       const displayDemands = (demandsRes || []).map(transformDemandForDisplay);
       setDemands(displayDemands);
+      // setTaxPercentage(displayDemands?.taxPercentage || 0);
+      // setBenefitPercentage(displayDemands?.benefitPercentage || 0)
       setCities(citiesRes || []);
       setHotels(hotelsRes || []);
       setTransports(transportsRes || []);
@@ -94,7 +96,25 @@ const Demands = () => {
       setLoading(false);
     }
   };
+  const handleBenefitPercentageChange = async (demandId: string, value: number) => {
+  setBenefitPercentage(value);
+  try {
+    await demandsAPI.updateBenefitPercentage(demandId, value);
+    await refreshDemand(demandId);
+  } catch (err) {
+    setError('Erreur lors de la mise à jour du pourcentage de bénéfice');
+  }
+};
 
+const handleTaxPercentageChange = async (demandId: string, value: number) => {
+  setTaxPercentage(value);
+  try {
+    await demandsAPI.updateTaxPercentage(demandId, value);
+    await refreshDemand(demandId);
+    } catch (err) {
+      setError('Erreur lors de la mise à jour du pourcentage de taxe');
+    }
+  };
   const refreshDemand = async (demandId: string) => {
     try {
       const updatedDemand = await demandsAPI.getById(demandId);
@@ -460,9 +480,9 @@ const Demands = () => {
       
       doc.setFontSize(10);
       doc.setTextColor(80, 80, 80);
-      doc.text(`${demand.fullName}`, 20, 92);
-      doc.text(`${demand.email}`, 20, 97);
-      if (demand.phone) doc.text(`${demand.phone}`, 20, 102);
+      doc.text(`${demand?.fullName}`, 20, 92);
+      doc.text(`${demand?.email}`, 20, 97);
+      if (demand?.phone) doc.text(`${demand?.phone}`, 20, 102);
       
       // Trip details
       doc.setFontSize(12);
@@ -553,7 +573,7 @@ const Demands = () => {
       }
       
       // Save
-      doc.save(`Devis-${demand.fullName.replace(/\s+/g, '-')}-${demand.id?.slice(0, 8) || 'N/A'}.pdf`);
+      doc.save(`Devis-${demand?.fullName.replace(/\s+/g, '-')}-${demand.id?.slice(0, 8) || 'N/A'}.pdf`);
       
     } catch (err) {
       setError('Erreur lors de la génération du devis');
@@ -645,7 +665,7 @@ const Demands = () => {
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-bold text-lg text-gray-800">{demand.fullName}</h3>
+                          <h3 className="font-bold text-lg text-gray-800">{demand?.fullName}</h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(demand.status)}`}>
                             {getStatusText(demand.status)}
                           </span>
@@ -741,21 +761,29 @@ const Demands = () => {
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="font-medium text-gray-800 flex items-center">
                                     <User className="w-4 h-4 mr-2 text-blue-500" />
-                                    {traveler.fullName}
+                                    {traveler?.fullName || 'Voyageur'}
                                   </div>
                                   <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                    {getTravelerType(traveler.type)}
+                                    {getTravelerType(
+                                      typeof traveler?.age === 'number'
+                                        ? traveler.age < 18 ? 'CHILD' : 'ADULT'
+                                        : 'ADULT'
+                                    )}
                                   </span>
                                 </div>
                                 <div className="text-sm text-gray-600">
                                   <div className="flex items-center mb-1">
                                     <span className="w-20">Âge:</span>
-                                    <span className="font-medium">{traveler.age} ans</span>
+                                    <span className="font-medium">{traveler?.age ? `${traveler?.age} ans` : 'N/A'}</span>
                                   </div>
-                                  <div className="flex items-center">
+                                  {/* <div className="flex items-center">
                                     <span className="w-20">Genre:</span>
-                                    <span className="font-medium">{traveler.gender === 'MALE' ? 'Homme' : 'Femme'} {getGenderIcon(traveler.gender)}</span>
-                                  </div>
+                                    <span className="font-medium">
+                                      {traveler?.gender
+                                        ? (traveler?.gender === 'MALE' ? 'Homme' : 'Femme') + ' ' + getGenderIcon(traveler?.gender)
+                                        : 'N/A'}
+                                    </span>
+                                  </div> */}
                                 </div>
                               </div>
                             ))}
@@ -910,8 +938,8 @@ const Demands = () => {
                               <div className="flex items-center gap-2">
                                 <input
                                   type="number"
-                                  value={benefitPercentage}
-                                  onChange={e => setBenefitPercentage(Number(e.target.value))}
+                                  value={demand?.benefitPercentage || 0}
+                                  onChange={e => handleBenefitPercentageChange(demand.id, Number(e.target.value))}
                                   className="p-2 border rounded w-20 text-sm"
                                   min="0"
                                   max="100"
@@ -931,8 +959,8 @@ const Demands = () => {
                               <div className="flex items-center gap-2">
                                 <input
                                   type="number"
-                                  value={taxPercentage}
-                                  onChange={e => setTaxPercentage(Number(e.target.value))}
+                                  value={demand?.taxPercentage || 0}
+                                  onChange={e => handleTaxPercentageChange(demand.id, Number(e.target.value))}
                                   className="p-2 border rounded w-20 text-sm"
                                   min="0"
                                   max="100"
@@ -952,15 +980,15 @@ const Demands = () => {
                                 <span>Coût de base:</span>
                                 <span className="font-semibold">{calcBasePrice(demand).toFixed(2)} MAD</span>
                               </div>
-                              {benefitPercentage > 0 && (
+                              {demand?.benefitPercentage > 0 && (
                                 <div className="flex justify-between text-green-600">
-                                  <span>Bénéfice ({benefitPercentage}%):</span>
-                                  <span className="font-semibold">+{(calcBasePrice(demand) * (benefitPercentage / 100)).toFixed(2)} MAD</span>
+                                  <span>Bénéfice ({demand?.benefitPercentage || 0}%):</span>
+                                  <span className="font-semibold">+{(calcBasePrice(demand) * (demand?.benefitPercentage||0 / 100)).toFixed(2)} MAD</span>
                                 </div>
                               )}
                               <div className="flex justify-between text-blue-600">
-                                <span>Taxes ({taxPercentage}%):</span>
-                                <span className="font-semibold">+{(calcBasePrice(demand) * (taxPercentage / 100)).toFixed(2)} MAD</span>
+                                <span>Taxes ({demand?.taxPercentage || 0}%):</span>
+                                <span className="font-semibold">+{(calcBasePrice(demand) * (demand?.taxPercentage||0 / 100)).toFixed(2)} MAD</span>
                               </div>
                               <div className="flex justify-between mt-2 pt-2 border-t border-gray-200 font-bold text-lg">
                                 <span>Coût de reviens global:</span>
@@ -1222,13 +1250,13 @@ const Demands = () => {
                             <span>Coût par voyageur:</span>
                             <span>{calcPricePerTraveler(demand).toFixed(2)} MAD</span>
                           </div>
-                          {benefitPercentage > 0 && (
+                          {demand?.benefitPercentage > 0 && (
                             <div className="text-sm text-gray-600 mt-1">
-                              Bénéfice: {benefitPercentage}%
+                              Bénéfice: {demand?.benefitPercentage || 0}%
                             </div>
                           )}
                           <div className="text-sm text-gray-600">
-                            Taxes: {taxPercentage}%
+                            Taxes: {demand?.taxPercentage || 0}%
                           </div>
                         </div>
                       </div>

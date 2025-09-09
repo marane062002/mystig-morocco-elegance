@@ -264,6 +264,39 @@ const ExperienceCarousel = () => {
               </div>
             ))}
           </div>
+
+          {/* Mobile view (visible on small screens) */}
+          <div className="mt-8 grid grid-cols-1 gap-6 md:hidden">
+            {experiences.map((experience, index) => (
+              <div
+                key={experience.id}
+                className="group cursor-pointer bg-white rounded-xl shadow-luxury overflow-hidden hover:shadow-luxury-hover transition-all duration-300"
+                onClick={() => setSelectedExperience(experience)}
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={experience.image}
+                    alt={experience.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="uppercase tracking-wide text-xs text-luxury-gold font-semibold">
+                    {experience.category}
+                  </div>
+                  <h3 className="mt-2 font-serif text-xl font-bold text-foreground">
+                    {experience.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {experience.shortDescription}
+                  </p>
+                  <button className="mt-4 text-luxury-gold hover:text-luxury-gold-dark font-medium">
+                    View Details →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,18 +1,32 @@
 import marrakechImage from '@/assets/marrakech.jpg';
-import chefchaouenImage from '@/assets/chefchaouen.jpg';
+import essaouiraImage from '@/assets/essaouira.jpg';
+import rabatImage from '@/assets/rabat-hassan-tower.jpg';
+import fesImage from '@/assets/fes-medina.jpg';
 
 const ImageTextSection = () => {
   const sections = [
     {
       image: marrakechImage,
-      title: 'Marrakech, l\'Âme Impériale',
-      description: 'Plongez dans l\'effervescence de la place Jemaa el-Fna, explorez les souks parfumés où résonnent les appels des marchands, et découvrez les jardins secrets de la Mamounia. Marrakech révèle ses trésors aux voyageurs en quête d\'authenticité et de raffinement.',
+      title: 'Marrakech, the Imperial Soul',
+      description: 'Dive into the bustling energy of Jemaa el-Fna square, explore the fragrant souks where merchant calls resonate, and discover the secret gardens of La Mamounia. Marrakech reveals its treasures to travelers seeking authenticity and refinement.',
       imageLeft: true
     },
     {
-      image: chefchaouenImage,
-      title: 'Chefchaouen, la Perle Bleue',
-      description: 'Nichée dans les montagnes du Rif, cette ville enchanteresse dévoile ses ruelles azur et ses terrasses fleuries. Chaque coin de rue offre une nouvelle perspective sur cette merveille architecturale où le temps semble suspendu entre ciel et terre.',
+      image: essaouiraImage,
+      title: 'Essaouira, the Atlantic Pearl',
+      description: 'Nestled along Morocco\'s Atlantic coast, this enchanting coastal city unveils its windswept ramparts and vibrant harbor. Every corner offers a new perspective on this maritime marvel where time seems suspended between ocean and sky.',
+      imageLeft: false
+    },
+    {
+      image: rabatImage,
+      title: 'Rabat, the Royal Capital',
+      description: 'The administrative capital combines imperial grandeur with modern sophistication. From the magnificent Hassan Tower to the elegant Andalusian Gardens, Rabat embodies Morocco\'s political and cultural heritage.',
+      imageLeft: true
+    },
+    {
+      image: fesImage,
+      title: 'Fés, the Spiritual Heart',
+      description: 'Step into the world\'s largest car-free urban area in Fés el-Bali. This ancient medina houses the oldest continuously operating university and preserves centuries of Islamic scholarship and traditional craftsmanship.',
       imageLeft: false
     }
   ];
@@ -47,7 +61,7 @@ const ImageTextSection = () => {
                   {section.description}
                 </p>
                 <button className="btn-luxury rounded-lg">
-                  Découvrir cette destination
+                  Discover this destination
                 </button>
               </div>
             </div>

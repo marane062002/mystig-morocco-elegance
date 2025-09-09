@@ -3,6 +3,8 @@ import {
   User, Mail, Phone, Baby, Plus, Minus, X, CheckCircle, AlertCircle,
   MapPin, Star, DollarSign
 } from 'lucide-react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import {
   City,
   Activity,
@@ -36,6 +38,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [dateError, setDateError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     mainTraveler: {
@@ -218,8 +221,31 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
     });
   };
 
+  const validatePhoneNumber = (phone: string): boolean => {
+    // Basic validation - phone should be at least 10 digits
+    const cleanPhone = phone.replace(/\D/g, '');
+    return cleanPhone.length >= 10;
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      mainTraveler: { ...prev.mainTraveler, phone: value }
+    }));
+    
+    // Validate phone number
+    if (value && !validatePhoneNumber(value)) {
+      setPhoneError('Veuillez entrer un numéro de téléphone valide');
+    } else {
+      setPhoneError(null);
+    }
+  };
+
   const isStep1Valid = (): boolean => {
     if (!formData.mainTraveler.fullName || !formData.mainTraveler.email || !formData.mainTraveler.phone) {
+      return false;
+    }
+    if (phoneError) {
       return false;
     }
     return formData.childAges.every(age => age > 0);
@@ -387,16 +413,28 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Téléphone *</label>
-                    <input
-                      type="tel"
+                    <PhoneInput
+                      country={'ma'}
+                      preferredCountries={['ma', 'fr', 'es', 'us']}
                       value={formData.mainTraveler.phone}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        mainTraveler: { ...prev.mainTraveler, phone: e.target.value }
-                      }))}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
-                      required
+                      onChange={handlePhoneChange}
+                      inputProps={{
+                        name: 'phone',
+                        required: true,
+                        className: 'w-full px-4 py-3 pl-16 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none'
+                      }}
+                      containerClass="w-full"
+                      buttonClass="!border-2 !border-gray-200 !rounded-l-xl !bg-white hover:!bg-gray-50"
+                      dropdownClass="!bg-white !border !border-gray-200 !rounded-lg !shadow-lg"
+                      searchClass="!bg-gray-50 !border !border-gray-200 !rounded-lg !mx-2 !my-2"
+                      placeholder="Entrez votre numéro de téléphone"
                     />
+                    {phoneError && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {phoneError}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

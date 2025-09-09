@@ -12,10 +12,10 @@ const ContactSection = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Planifiez Votre Voyage
+                Get in Touch
               </h2>
               <p className="text-xl text-muted-foreground">
-                Nos experts vous accompagnent dans la création de votre voyage sur mesure
+                Our experts accompany you in creating your tailor-made journey
               </p>
             </div>
 
@@ -23,7 +23,7 @@ const ContactSection = () => {
               {/* Contact Info */}
               <div className="fade-in-up">
                 <h3 className="font-serif text-2xl font-bold text-foreground mb-8">
-                  Nous Contacter
+                  Contact Us
                 </h3>
                 
                 <div className="space-y-6">
@@ -32,12 +32,12 @@ const ContactSection = () => {
                       <MapPin className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Adresse</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Address</h4>
                       <p className="text-muted-foreground">
-                        Résidence Emeraude, Immeuble 6,<br />
-                        Etage 1, Bureau 3<br />
+                        Residence Emeraude, Building 6,<br />
+                        Floor 1, Office 3<br />
                         Wlah Hlal Hssain, Sala Al Jadida<br />
-                        Maroc
+                        Morocco
                       </p>
                     </div>
                   </div>
@@ -47,7 +47,7 @@ const ContactSection = () => {
                       <Phone className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Téléphone</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Phone</h4>
                       <p className="text-muted-foreground">
                         +212 524 123 456<br />
                         +212 661 234 567 (Mobile)
@@ -73,11 +73,11 @@ const ContactSection = () => {
                       <Clock className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Horaires</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Hours</h4>
                       <p className="text-muted-foreground">
-                        Lun-Ven : 9h00 - 18h00<br />
-                        Sam : 9h00 - 13h00<br />
-                        Urgences : 24h/7j
+                        Mon-Fri: 9:00 AM - 6:00 PM<br />
+                        Sat: 9:00 AM - 1:00 PM<br />
+                        Emergency: 24/7
                       </p>
                     </div>
                   </div>
@@ -92,10 +92,10 @@ const ContactSection = () => {
                       <Plus className="w-8 h-8 text-primary-foreground" />
                     </div>
                     <h3 className="text-2xl font-bold text-foreground mb-2">
-                      Programme Personnalisé
+                      Custom Program
                     </h3>
                     <p className="text-muted-foreground">
-                      Créez votre voyage sur mesure en 3 étapes simples
+                      Create your tailor-made journey in 3 simple steps
                     </p>
                   </div>
 
@@ -106,8 +106,8 @@ const ContactSection = () => {
                         1
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Informations</h4>
-                        <p className="text-sm text-muted-foreground">Dites-nous qui vous êtes</p>
+                        <h4 className="font-semibold text-foreground mb-1">Information</h4>
+                        <p className="text-sm text-muted-foreground">Tell us who you are</p>
                       </div>
                     </div>
 
@@ -116,8 +116,8 @@ const ContactSection = () => {
                         2
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Choix</h4>
-                        <p className="text-sm text-muted-foreground">Choisissez vos destinations</p>
+                        <h4 className="font-semibold text-foreground mb-1">Choices</h4>
+                        <p className="text-sm text-muted-foreground">Choose your destinations</p>
                       </div>
                     </div>
 
@@ -126,8 +126,8 @@ const ContactSection = () => {
                         3
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground mb-1">Envoi de votre demande</h4>
-                        <p className="text-sm text-muted-foreground">Validez votre demande</p>
+                        <h4 className="font-semibold text-foreground mb-1">Send your request</h4>
+                        <p className="text-sm text-muted-foreground">Validate your request</p>
                       </div>
                     </div>
                   </div>
@@ -136,26 +136,26 @@ const ContactSection = () => {
                     onClick={() => setIsPlanAFormOpen(true)}
                     className="w-full bg-primary text-primary-foreground py-4 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 flex items-center justify-center space-x-2"
                   >
-                    <span>Commencer Maintenant</span>
+                    <span>Start Now</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </button>
 
                   <p className="text-center text-sm text-muted-foreground mt-4">
-                    Réponse sous 72h maximum • Devis gratuit • Sans engagement
+                    Response within 72h maximum • Free quote • No commitment
                   </p>
                 </div>
 
                 {/* Alternative Contact Options */}
                 <div className="mt-6 text-center">
-                  <p className="text-muted-foreground mb-3">Ou contactez-nous directement :</p>
+                  <p className="text-muted-foreground mb-3">Or contact us directly:</p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <a
                       href="tel:+212524123456"
                       className="px-4 py-2 border border-border rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
                     >
-                      📞 Appeler
+                      📞 Call
                     </a>
                     <a
                       href="mailto:info@mystictravel.ma"

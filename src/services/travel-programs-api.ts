@@ -185,6 +185,20 @@ export const demandsAPI = {
       },
     }),
 
+  updateBenefitPercentage: async (demandId: string, benefitPercentage: number): Promise<Demand> =>
+    apiRequest(`/demands/${demandId}/benefit-percentage`, {
+      method: 'PATCH',
+      body: JSON.stringify(benefitPercentage),
+      headers: { 'Content-Type': 'application/json' },
+    }),
+
+  updateTaxPercentage: async (demandId: string, taxPercentage: number): Promise<Demand> =>
+    apiRequest(`/demands/${demandId}/tax-percentage`, {
+      method: 'PATCH',
+      body: JSON.stringify(taxPercentage),
+      headers: { 'Content-Type': 'application/json' },
+    }),
+
   // Frontend-only percentage management (no API calls needed)
   // benefitPercentage and taxPercentage are now managed in frontend state
 
