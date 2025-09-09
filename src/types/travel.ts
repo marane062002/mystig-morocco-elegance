@@ -44,6 +44,9 @@ export interface City {
   region?: string;
   country?: string;
   enabled: boolean;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export enum RoomTypeEnum {
   SINGLE = 'SINGLE',
@@ -65,6 +68,7 @@ export interface Hotel {
   roomTypes: RoomType[];
   stars: number;
   active: boolean;
+  price?: number; // Add optional price for compatibility
 }
 
 export interface Activity {
@@ -90,9 +94,11 @@ export interface Service {
   description: string;
   type: ServiceType;
   provider: string;
+  providerName?: string; // Add for compatibility
   price: number;
   currency: Currency;
   isActive: boolean;
+  city?: City; // Add for compatibility
   createdAt: string;
   updatedAt: string;
 }

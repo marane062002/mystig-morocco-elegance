@@ -1,40 +1,40 @@
-import chefchaouenImage from '@/assets/chefchaouen.jpg';
-import marrakechImage from '@/assets/marrakech.jpg';
 import essaouiraImage from '@/assets/essaouira.jpg';
 import desertImage from '@/assets/desert-sunset.jpg';
 import atlasImage from '@/assets/atlas-mountains.jpg';
+import agadirImage from '@/assets/hero-riad.jpg'; // Using as placeholder
+import rabatImage from '@/assets/chefchaouen.jpg'; // Using as placeholder
 
 const DestinationsGrid = () => {
   const destinations = [
     {
       image: desertImage,
       title: 'Merzouga',
-      subtitle: 'Désert du Sahara',
-      description: 'Nuits étoilées et dunes infinies'
+      subtitle: 'Sahara Desert',
+      description: 'Starlit nights and endless dunes'
     },
     {
       image: atlasImage,
-      title: 'Vallée de l\'Ourika',
-      subtitle: 'Montagnes de l\'Atlas',
-      description: 'Villages berbères authentiques'
+      title: 'Ourika Valley',
+      subtitle: 'Atlas Mountains',
+      description: 'Authentic Berber villages'
     },
     {
       image: essaouiraImage,
-      title: 'Plages d\'Essaouira',
-      subtitle: 'Côte Atlantique',
-      description: 'Charme portuaire et vents océaniques'
+      title: 'Essaouira Beaches',
+      subtitle: 'Atlantic Coast',
+      description: 'Port charm and ocean winds'
     },
     {
-      image: chefchaouenImage,
-      title: 'Chefchaouen',
-      subtitle: 'Perle du Rif',
-      description: 'Architecture bleue envoûtante'
+      image: agadirImage,
+      title: 'Agadir',
+      subtitle: 'Atlantic Pearl',
+      description: 'Modern resort and golden beaches'
     },
     {
-      image: marrakechImage,
-      title: 'Marrakech',
-      subtitle: 'Ville Impériale',
-      description: 'Palais et jardins secrets'
+      image: rabatImage,
+      title: 'Rabat',
+      subtitle: 'Imperial Capital',
+      description: 'Political heart and royal heritage'
     }
   ];
 
@@ -43,10 +43,10 @@ const DestinationsGrid = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Destinations Recommandées
+            Recommended Destinations
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Des lieux d'exception soigneusement sélectionnés pour leur beauté authentique et leur richesse culturelle
+            Exceptional places carefully selected for their authentic beauty and cultural richness
           </p>
         </div>
 

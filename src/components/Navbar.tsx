@@ -26,9 +26,9 @@ const Navbar = () => {
     { name: 'About Us', href: '#about' },
     { name: 'Experiences', href: '#experiences' },
     { name: 'Destinations', href: '#destinations' },
-    { name: 'Offres Speciales', href: '#special-packages' },
+    { name: 'Special Offers', href: '#special-packages' },
     { name: 'Gallery', href: '#gallery' },
-    // { name: 'Plan A', href: '#', onClick: () => setShowPlanAForm(true) },
+    { name: 'Plan A', href: '#', onClick: () => setShowPlanAForm(true) },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -53,7 +53,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <div key={link.name} className="relative group">
-                {link.onClick ? (
+                {'onClick' in link ? (
                   <button
                     onClick={link.onClick}
                     className="text-foreground font-light text-sm tracking-wide uppercase hover:text-primary transition-all duration-300 relative flex items-center space-x-1"
@@ -153,7 +153,7 @@ const Navbar = () => {
             <div className="space-y-4">
               {navLinks.map((link, index) => (
                 <div key={link.name}>
-                  {link.onClick ? (
+                  {'onClick' in link ? (
                     <button
                       onClick={() => {
                         link.onClick();

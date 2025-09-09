@@ -212,7 +212,7 @@ const PlanAForm = ({ isOpen, onClose }: PlanAFormProps) => {
         duration: 0,
         activityIds: []
       };
-      selection[field] = value;
+      (selection as any)[field] = value;
       if (field === 'startDate' || field === 'endDate') {
         selection.duration = calculateDuration(selection.startDate, selection.endDate);
       }

@@ -12,10 +12,10 @@ const ContactSection = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Planifiez Votre Voyage
+                Get in Touch
               </h2>
               <p className="text-xl text-muted-foreground">
-                Nos experts vous accompagnent dans la création de votre voyage sur mesure
+                Our experts accompany you in creating your tailor-made journey
               </p>
             </div>
 
@@ -23,7 +23,7 @@ const ContactSection = () => {
               {/* Contact Info */}
               <div className="fade-in-up">
                 <h3 className="font-serif text-2xl font-bold text-foreground mb-8">
-                  Nous Contacter
+                  Contact Us
                 </h3>
                 
                 <div className="space-y-6">
@@ -32,12 +32,12 @@ const ContactSection = () => {
                       <MapPin className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Adresse</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Address</h4>
                       <p className="text-muted-foreground">
-                        Résidence Emeraude, Immeuble 6,<br />
-                        Etage 1, Bureau 3<br />
+                        Residence Emeraude, Building 6,<br />
+                        Floor 1, Office 3<br />
                         Wlah Hlal Hssain, Sala Al Jadida<br />
-                        Maroc
+                        Morocco
                       </p>
                     </div>
                   </div>
@@ -47,7 +47,7 @@ const ContactSection = () => {
                       <Phone className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Téléphone</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Phone</h4>
                       <p className="text-muted-foreground">
                         +212 524 123 456<br />
                         +212 661 234 567 (Mobile)
@@ -73,11 +73,11 @@ const ContactSection = () => {
                       <Clock className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">Horaires</h4>
+                      <h4 className="font-semibold text-foreground mb-1">Hours</h4>
                       <p className="text-muted-foreground">
-                        Lun-Ven : 9h00 - 18h00<br />
-                        Sam : 9h00 - 13h00<br />
-                        Urgences : 24h/7j
+                        Mon-Fri: 9:00 AM - 6:00 PM<br />
+                        Sat: 9:00 AM - 1:00 PM<br />
+                        Emergency: 24/7
                       </p>
                     </div>
                   </div>

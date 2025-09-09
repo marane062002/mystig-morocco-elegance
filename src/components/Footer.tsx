@@ -2,13 +2,13 @@ import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 
 const Footer = () => {
   const quickLinks = [
-    { name: 'Accueil', href: '#home' },
-    { name: 'Qui sommes-nous', href: '#about' },
-    { name: 'Nos Services', href: '#services' },
+    { name: 'Home', href: '#home' },
+    { name: 'About Us', href: '#about' },
+    { name: 'Our Services', href: '#services' },
     { name: 'Destinations', href: '#destinations' },
-    { name: 'Hébergements', href: '#accommodations' },
-    { name: 'Expériences', href: '#activities' },
-    { name: 'Gastronomie', href: '#gastronomy' },
+    { name: 'Accommodations', href: '#accommodations' },
+    { name: 'Experiences', href: '#activities' },
+    { name: 'Gastronomy', href: '#gastronomy' },
     { name: 'Transport', href: '#transport' },
     { name: 'Contact', href: '#contact' },
   ];
@@ -30,9 +30,9 @@ const Footer = () => {
               MysticTravel
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-md">
-              Agence de voyage spécialisée dans la découverte authentique du Maroc. 
-              Nous créons des expériences uniques et personnalisées qui respectent la culture locale 
-              et révèlent les trésors cachés du royaume chérifien.
+              Travel agency specialized in authentic discovery of Morocco. 
+              We create unique and personalized experiences that respect local culture 
+              and reveal the hidden treasures of the Cherifian kingdom.
             </p>
             
             {/* Newsletter */}
@@ -43,11 +43,11 @@ const Footer = () => {
               <div className="flex max-w-sm">
                 <input
                   type="email"
-                  placeholder="Votre email"
+                  placeholder="Your email"
                   className="flex-1 px-4 py-2 bg-background border border-border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary"
                 />
                 <button className="px-6 py-2 bg-primary text-primary-foreground rounded-r-lg hover:bg-primary/90 transition-colors duration-300">
-                  S'abonner
+                  Subscribe
                 </button>
               </div>
             </div>
@@ -75,7 +75,7 @@ const Footer = () => {
           {/* Contact & Social */}
           <div>
             <h4 className="font-semibold text-foreground mb-6">
-              Nous Suivre
+              Follow Us
             </h4>
             <div className="flex space-x-4 mb-6">
               {socialLinks.map((social, index) => (
@@ -100,13 +100,13 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-border/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>© 2024 MysticTravel. Tous droits réservés.</p>
+          <p>© 2024 MysticTravel. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-primary transition-colors duration-300">
-              Politique de confidentialité
+              Privacy Policy
             </a>
             <a href="#" className="hover:text-primary transition-colors duration-300">
-              Conditions générales
+              Terms & Conditions
             </a>
           </div>
         </div>
